@@ -1,25 +1,34 @@
-# LandChoice
+# 🌍 LandChoice
 
-LandChoice is a smart web platform that helps users compare countries based on important factors such as cost of living, visa requirements, and quality of life, so they can make better decisions about travel, study, or relocation.
+**LandChoice** is a smart web platform that helps users compare countries based on important factors such as **cost of living, visa requirements, and quality of life**, enabling them to make better decisions about travel, study, or relocation.
 
-## Features
-- Explore countries
-- Compare country options
-- View visa-related information
-- Simple and clean user interface
-- Responsive design
-- Fast development setup using Vite
+---
 
-## Tech Stack
-- React
-- Vite
-- React Router
-- Tailwind CSS
-- Axios
-- Font Awesome
-- ESLint
+## 🚀 Features
 
-## Project Structure
+* 🌍 Explore countries
+* ⚖️ Compare country options
+* 📄 View visa-related information
+* 🎨 Simple and clean user interface
+* 📱 Fully responsive design
+* ⚡ Fast development using Vite
+
+---
+
+## 🛠️ Tech Stack
+
+* ⚛️ React
+* ⚡ Vite
+* 🔗 React Router
+* 🎨 Tailwind CSS
+* 📡 Axios
+* 🎯 Font Awesome
+* 🧹 ESLint
+
+---
+
+## 📁 Project Structure
+
 ```bash
 landchoice/
 ├── public/
@@ -32,88 +41,106 @@ landchoice/
 │   └── index.css
 ├── package.json
 └── README.md
-Installation
+```
 
-Clone the repository:
+---
 
+## ⚙️ Installation
+
+### 1. Clone the repository
+
+```bash
 git clone <your-repo-url>
 cd landchoice
+```
 
-Install dependencies:
+### 2. Install dependencies
 
+```bash
 npm install
+```
 
-Run the development server:
+### 3. Run development server
 
+```bash
 npm run dev
+```
 
-Build for production:
+---
 
+## 🏗️ Build & Preview
+
+### Build for production
+
+```bash
 npm run build
+```
 
-Preview production build:
+### Preview production build
 
+```bash
 npm run preview
-Available Scripts
-npm run dev
-Starts the development server using Vite.
-npm run build
-Builds the app for production.
-npm run lint
-Runs ESLint to check code quality.
-npm run preview
-Previews the production build locally.
-Installed Libraries
-Main Dependencies
-react
-The main library used to build the user interface.
-react-dom
-Used to render React components in the browser.
-react-router-dom
-Handles navigation between pages in the application.
-axios
-Used for making HTTP requests and fetching data from APIs.
-tailwindcss
-Utility-first CSS framework for styling the project.
-@tailwindcss/vite
-Tailwind CSS integration for Vite.
-@fortawesome/fontawesome-svg-core
-Core package required for using Font Awesome icons.
-@fortawesome/free-solid-svg-icons
-Contains solid style icons from Font Awesome.
-@fortawesome/free-brands-svg-icons
-Contains brand icons such as Facebook, Twitter, GitHub, etc.
-@fortawesome/react-fontawesome
-React wrapper for using Font Awesome icons inside React components.
-Development Dependencies
-vite
-Fast frontend build tool and development server.
-@vitejs/plugin-react
-Adds React support to Vite.
-eslint
-Tool for checking code quality and finding errors.
-@eslint/js
-Base ESLint configuration for JavaScript.
-eslint-plugin-react-hooks
-Linting rules for React Hooks.
-eslint-plugin-react-refresh
-Helps with React Fast Refresh linting in development.
-globals
-Provides global variables configuration for ESLint.
-@types/react
-Type definitions for React.
-@types/react-dom
-Type definitions for React DOM.
-Purpose of the Project
+```
 
-The goal of LandChoice is to simplify the process of choosing the right country by turning scattered and complex information into an easy comparison experience.
+---
 
-Future Improvements
-Add interactive map
-Add filters for country comparison
-Add detailed visa and cost calculator
-Add community forum
-Add news feed for visa and embassy updates
-Author
+## 📜 Available Scripts
 
-Developed as part of the LandChoice project.
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start development server |
+| `npm run build`   | Build project            |
+| `npm run preview` | Preview production build |
+
+---
+
+## 📦 Installed Libraries
+
+### 🔹 Main Dependencies
+
+* **react** – Builds the UI
+* **react-dom** – Renders components in browser
+* **react-router-dom** – Navigation between pages
+* **axios** – API requests
+* **tailwindcss** – Styling framework
+* **@tailwindcss/vite** – Tailwind + Vite integration
+* **@fortawesome/fontawesome-svg-core** – Core icons
+* **@fortawesome/free-solid-svg-icons** – Solid icons
+* **@fortawesome/free-brands-svg-icons** – Brand icons
+* **@fortawesome/react-fontawesome** – React icon component
+
+---
+
+### 🔹 Development Dependencies
+
+* **vite** – Build tool
+* **@vitejs/plugin-react** – React support
+* **eslint** – Code checker
+* **@eslint/js** – Base config
+* **eslint-plugin-react-hooks** – Hooks rules
+* **eslint-plugin-react-refresh** – Fast refresh support
+* **globals** – Global variables config
+* **@types/react** – React types
+* **@types/react-dom** – React DOM types
+
+---
+
+## 🎯 Purpose of the Project
+
+The goal of **LandChoice** is to simplify choosing the right country by turning **scattered and complex information** into a **clear and easy comparison experience**.
+
+---
+
+## 🔮 Future Improvements
+
+* 🗺️ Interactive map
+* 🔍 Advanced filters
+* 💰 Cost & salary calculator
+* 💬 Community forum
+* 📰 News feed for visa updates
+
+---
+
+## 👩‍💻 Author
+
+Developed as part of the **LandChoice Project**.
