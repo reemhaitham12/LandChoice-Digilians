@@ -1,14 +1,14 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Layout from './Components/Layout';
-import { Home } from './Pages/Home';
-import { Explore } from './Pages/Explore';
-import { SalaryFit } from './Pages/SalaryFit';
-import { ComparyCountry } from './Pages/CompareCountry';
-import { Checklist } from './Pages/CheckList';
-import { News } from './Pages/News';
-import { CountryDetails } from './Pages/CountryDetails';
-import { NotFound } from './Pages/NotFound';
+import  Home  from './Pages/Home';
+import  Explore  from './Pages/Explore';
+import  SalaryFit  from './Pages/SalaryFit';
+import  ComparyCountry  from './Pages/CompareCountry';
+import  Checklist  from './Pages/CheckList';
+import  News  from './Pages/News';
+import  CountryDetails  from './Pages/CountryDetails';
+import  NotFound  from './Pages/NotFound';
 
 const routers = createBrowserRouter([
   {
