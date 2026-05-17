@@ -11,6 +11,7 @@ import {
   faSearch,
   faRss,
   faRightFromBracket,
+  faUser
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
@@ -69,10 +70,9 @@ export default function Navbar() {
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${
-                isActive
-                  ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${isActive
+                ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
               }`
             }
           >
@@ -84,10 +84,9 @@ export default function Navbar() {
           <NavLink
             to="/explore"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${
-                isActive
-                  ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${isActive
+                ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
               }`
             }
           >
@@ -99,10 +98,9 @@ export default function Navbar() {
           <NavLink
             to="/salary-fit"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${
-                isActive
-                  ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${isActive
+                ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
               }`
             }
           >
@@ -114,10 +112,9 @@ export default function Navbar() {
           <NavLink
             to="/compare"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${
-                isActive
-                  ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${isActive
+                ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
               }`
             }
           >
@@ -129,10 +126,9 @@ export default function Navbar() {
           <NavLink
             to="/checklist"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${
-                isActive
-                  ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${isActive
+                ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
               }`
             }
           >
@@ -144,10 +140,9 @@ export default function Navbar() {
           <NavLink
             to="/news"
             className={({ isActive }) =>
-              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${
-                isActive
-                  ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+              `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${isActive
+                ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+                : "text-slate-400 hover:text-white hover:bg-white/5"
               }`
             }
           >
@@ -160,17 +155,14 @@ export default function Navbar() {
         {/* Buttons */}
         <div className="flex items-center gap-4">
 
-          <button
-            className="
-            px-6 py-2.5 rounded-full
-            bg-blue-500/10
-            border border-blue-400/20
-            text-blue-300
-            hover:bg-blue-500/20
-            transition-all duration-300
-          "
+          <button className="w-11 h-11 rounded-full bg-blue-500/10 border border-blue-400/20
+        text-blue-300
+        hover:bg-blue-500/20
+        transition-all duration-300
+        flex items-center justify-center
+      "
           >
-            Profile
+            <FontAwesomeIcon icon={faUser} />
           </button>
 
           <button
