@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAuth } from "../context/AuthContext";
 
 import {
   faGlobe,
@@ -18,6 +19,14 @@ import {
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const navLinks = [
     { to: "/", label: "Map", icon: faMap },
@@ -38,7 +47,11 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-[#111827]/95 via-[#172554]/90 to-[#111827]/95 backdrop-blur-xl border-b border-white/10 px-6 py-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3">
+        <Link
+          to="/"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-3"
+        >
           <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#6C8FD9] to-[#f29706] flex items-center justify-center shadow-[0_0_25px_rgba(214,168,95,0.25)]">
             <FontAwesomeIcon icon={faGlobe} className="text-white text-lg" />
           </div>
@@ -57,15 +70,30 @@ export default function Navbar() {
           ))}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          <button className="w-11 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center">
-            <FontAwesomeIcon icon={faUser} />
-          </button>
+        {user && (
+          <div className="hidden md:flex items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 border border-white/10">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center">
+                <span className="text-white font-bold text-sm">
+                  {user.fullName?.charAt(0)?.toUpperCase() ||
+                    user.email?.charAt(0)?.toUpperCase() ||
+                    "U"}
+                </span>
+              </div>
 
-          <button className="w-11 h-11 rounded-full bg-[#0f172a]/70 border border-white/10 text-slate-300 hover:text-white hover:bg-white/5 transition-all">
-            <FontAwesomeIcon icon={faRightFromBracket} />
-          </button>
-        </div>
+              <span className="text-sm text-white hidden lg:block">
+                {user.fullName || user.email || "User"}
+              </span>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="w-11 h-11 rounded-full bg-red-500/10 border border-red-400/20 text-red-300 hover:bg-red-500/20 transition-all duration-300 flex items-center justify-center"
+            >
+              <FontAwesomeIcon icon={faRightFromBracket} />
+            </button>
+          </div>
+        )}
 
         <button
           onClick={() => setIsOpen((prev) => !prev)}
@@ -77,7 +105,9 @@ export default function Navbar() {
 
       <div
         className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-          isOpen ? "max-h-[520px] opacity-100 translate-y-0 mt-4" : "max-h-0 opacity-0 -translate-y-4"
+          isOpen
+            ? "max-h-[520px] opacity-100 translate-y-0 mt-4"
+            : "max-h-0 opacity-0 -translate-y-4"
         }`}
       >
         <div className="bg-[#0f172a]/95 border border-white/10 rounded-3xl p-4 shadow-2xl">
@@ -95,15 +125,34 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="flex items-center gap-3 mt-4 pt-4 border-t border-white/10">
-            <button className="flex-1 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center">
-              <FontAwesomeIcon icon={faUser} />
-            </button>
+          {user && (
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">
+                    {user.fullName?.charAt(0)?.toUpperCase() ||
+                      user.email?.charAt(0)?.toUpperCase() ||
+                      "U"}
+                  </span>
+                </div>
 
-            <button className="flex-1 h-11 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center">
-              <FontAwesomeIcon icon={faRightFromBracket} />
-            </button>
-          </div>
+                <div>
+                  <p className="text-white text-sm font-medium">
+                    {user.fullName || "User"}
+                  </p>
+                  <p className="text-slate-400 text-xs">{user.email}</p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="w-full h-11 rounded-full bg-red-500/10 border border-red-400/20 text-red-300 hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
+              >
+                <FontAwesomeIcon icon={faRightFromBracket} />
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
