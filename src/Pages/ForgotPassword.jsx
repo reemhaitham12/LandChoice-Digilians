@@ -3,43 +3,38 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import * as Yup from "yup";
 import { MdEmail } from "react-icons/md";
-import { FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaKey } from "react-icons/fa";
 
-const loginSchema = Yup.object().shape({
+const forgotSchema = Yup.object().shape({
   email: Yup.string()
     .email("Please enter a valid email address")
     .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
 });
 
-const Login = () => {
+const ForgotPassword = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const { forgotPassword } = useAuth();
+  const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [apiError, setApiError] = useState("");
+  const [apiSuccess, setApiSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: "" }));
-    }
+    setEmail(e.target.value);
+    if (errors.email) setErrors({});
     if (apiError) setApiError("");
+    if (apiSuccess) setApiSuccess("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setApiError("");
+    setApiSuccess("");
     setErrors({});
 
     try {
-      await loginSchema.validate(formData, { abortEarly: false });
+      await forgotSchema.validate({ email }, { abortEarly: false });
     } catch (validationError) {
       const newErrors = {};
       validationError.inner.forEach((err) => {
@@ -50,11 +45,15 @@ const Login = () => {
     }
 
     setIsSubmitting(true);
-    const result = await login(formData.email, formData.password, rememberMe);
+    const result = await forgotPassword(email);
     setIsSubmitting(false);
 
     if (result.success) {
-      navigate("/dashboard");
+      setApiSuccess(result.message);
+      localStorage.setItem("reset_email", email);
+      setTimeout(() => {
+        navigate("/verify-reset-code");
+      }, 1500);
     } else {
       setApiError(result.error);
     }
@@ -66,15 +65,21 @@ const Login = () => {
         <div className="bg-[#111827]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-[0_0_40px_rgba(59,130,246,0.1)] p-8 md:p-10">
           <div className="text-center mb-8">
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <FaLock className="text-white text-2xl" />
+              <FaKey className="text-white text-2xl" />
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">
-              Welcome Back
+              Forgot Password?
             </h1>
             <p className="text-gray-400 text-sm">
-              Sign in to your LandChoice account
+              Enter your email and we'll send you a reset code
             </p>
           </div>
+
+          {apiSuccess && (
+            <div className="mb-6 p-4 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
+              {apiSuccess}
+            </div>
+          )}
 
           {apiError && (
             <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm text-center">
@@ -91,8 +96,7 @@ const Login = () => {
                 <MdEmail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg" />
                 <input
                   type="email"
-                  name="email"
-                  value={formData.email}
+                  value={email}
                   onChange={handleChange}
                   placeholder="Enter your email"
                   className="w-full bg-[#0B1120] border border-gray-700 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
@@ -103,68 +107,23 @@ const Login = () => {
               )}
             </div>
 
-            <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  className="w-full bg-[#0B1120] border border-gray-700 rounded-xl py-3.5 pl-12 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
-                >
-                  {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1.5 text-red-400 text-xs">{errors.password}</p>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-600 bg-[#0B1120] text-blue-500 focus:ring-blue-500/50 focus:ring-offset-0"
-                />
-                <span className="text-gray-400 text-sm">Remember me</span>
-              </label>
-              <Link
-                to="/forgot-password"
-                className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
-              >
-                Forgot Password?
-              </Link>
-            </div>
-
             <button
               type="submit"
               disabled={isSubmitting}
               className="w-full py-3.5 rounded-xl bg-gradient-to-r from-yellow-400 to-blue-500 text-white font-semibold text-sm hover:shadow-lg hover:shadow-blue-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {isSubmitting ? "Signing in..." : "Sign In"}
+              {isSubmitting ? "Sending..." : "Send Code"}
             </button>
           </form>
 
           <div className="mt-8 text-center">
             <p className="text-gray-400 text-sm">
-              Don't have an account?{" "}
+              Remember your password?{" "}
               <Link
-                to="/signup"
+                to="/login"
                 className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
               >
-                Create Account
+                Sign In
               </Link>
             </p>
           </div>
@@ -174,4 +133,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
