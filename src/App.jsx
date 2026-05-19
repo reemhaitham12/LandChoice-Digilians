@@ -1,4 +1,18 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+
+
+
+
+import { createBrowserRouter, RouterProvider, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './Components/Layout';
+import  Home  from './Pages/Home';
+import  Explore  from './Pages/Explore';
+import  SalaryFit  from './Pages/SalaryFit';
+import  ComparyCountry  from './Pages/CompareCountry';
+import  Checklist  from './Pages/CheckList';
+import  News  from './Pages/News';
+import  CountryDetails  from './Pages/CountryDetails';
+import  NotFound  from './Pages/NotFound';
 import AuthProvider, { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Login from "./Pages/Login";
@@ -14,30 +28,44 @@ const HomeRedirect = () => {
   return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
 };
 
-const App = () => {
-  return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<HomeRedirect />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/verify-code" element={<VerifyCode />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-reset-code" element={<VerifyResetCode />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </AuthProvider>
-    </BrowserRouter>
-  );
-};
+const routers = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { index: true, element: <Home /> },
+
+      { path: 'explore', element: <Explore /> },
+      { path: 'salary-fit', element: <SalaryFit /> },
+      { path: 'compare', element: <ComparyCountry /> },
+      { path: 'checklist', element: <Checklist /> },
+      { path: 'news', element: <News /> },
+      { path: 'country/:id', element: <CountryDetails /> },
+
+      { path: 'login', element: <Login /> },
+      { path: 'signup', element: <Signup /> },
+      { path: 'verify-code', element: <VerifyCode /> },
+      { path: 'forgot-password', element: <ForgotPassword /> },
+      { path: 'verify-reset-code', element: <VerifyResetCode /> },
+      { path: 'reset-password', element: <ResetPassword /> },
+
+      {
+        path: 'dashboard',
+        element: (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+
+      { path: '*', element: <NotFound /> },
+    ],
+  },
+]);
+
+function App() {
+  return <RouterProvider router={routers} />;
+}
+
 
 export default App;
