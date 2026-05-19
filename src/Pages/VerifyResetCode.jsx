@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../Context/AuthContext";
 import * as Yup from "yup";
 import { FaShieldAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
@@ -71,7 +71,7 @@ const VerifyResetCode = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#020618] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="bg-[#111827]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-[0_0_40px_rgba(59,130,246,0.1)] p-8 md:p-10">
           <div className="text-center mb-8">
