@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../Context/AuthContext";
 import * as Yup from "yup";
 import { MdEmail } from "react-icons/md";
 import { FaKey } from "react-icons/fa";
@@ -60,7 +60,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#020618] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="bg-[#111827]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-[0_0_40px_rgba(59,130,246,0.1)] p-8 md:p-10">
           <div className="text-center mb-8">

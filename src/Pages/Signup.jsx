@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../Context/AuthContext";
 import * as Yup from "yup";
 import { MdEmail } from "react-icons/md";
 import { FaLock, FaEye, FaEyeSlash, FaUser } from "react-icons/fa";
@@ -84,9 +84,9 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#020618] flex items-center justify-center px-4 pt-24 pb-8">
       <div className="w-full max-w-md">
-        <div className="bg-[#111827]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-[0_0_40px_rgba(59,130,246,0.1)] p-8 md:p-10">
+        <div className="bg-[#111827]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-[0_0_40px_rgba(59,130,246,0.08)] p-6 md:p-7">
           <div className="text-center mb-8">
             <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
               <FaUser className="text-white text-2xl" />
