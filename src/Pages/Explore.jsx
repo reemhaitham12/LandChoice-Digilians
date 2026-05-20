@@ -12,7 +12,7 @@ import {
   faTimes,
   faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
-import apiService from '../service/apiService';
+import apiService from '../Services/apiService';
 
 export default function Explore() {
   const [countries, setCountries] = useState([]);
