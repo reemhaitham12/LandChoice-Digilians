@@ -37,7 +37,10 @@ const crowdedCountries = {
 
 export default function Home() {
     const [selectedCountry, setSelectedCountry] = useState(null);
-    const [zoom, setZoom] = useState(1);
+    const [position, setPosition] = useState({
+        coordinates: [10, 10],
+        zoom: 1,
+    });
 
     const { visaData = [], loading } = useVisa();
     const navigate = useNavigate();
@@ -68,21 +71,36 @@ export default function Home() {
             <div className="relative h-[calc(100vh-96px)] w-full overflow-hidden flex items-center justify-center px-4">
                 <div className="absolute z-20 flex flex-col gap-3 top-4 left-4 lg:left-auto lg:right-6 lg:top-1/2 lg:-translate-y-1/2">
                     <button
-                        onClick={() => setZoom(zoom + 0.5)}
+                        onClick={() =>
+                            setPosition((pos) => ({
+                                ...pos,
+                                zoom: pos.zoom + 0.5,
+                            }))
+                        }
                         className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400/30 text-blue-200 text-lg shadow-[0_0_20px_rgba(59,130,246,0.25)] hover:bg-blue-500/30 transition-all flex items-center justify-center"
                     >
                         <FontAwesomeIcon icon={faPlus} />
                     </button>
 
                     <button
-                        onClick={() => setZoom(Math.max(1, zoom - 0.5))}
+                        onClick={() =>
+                            setPosition((pos) => ({
+                                ...pos,
+                                zoom: Math.max(1, pos.zoom - 0.5),
+                            }))
+                        }
                         className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400/30 text-blue-200 text-lg shadow-[0_0_20px_rgba(59,130,246,0.25)] hover:bg-blue-500/30 transition-all flex items-center justify-center"
                     >
                         <FontAwesomeIcon icon={faMinus} />
                     </button>
 
                     <button
-                        onClick={() => setZoom(1)}
+                        onClick={() =>
+                            setPosition({
+                                coordinates: [10, 10],
+                                zoom: 1,
+                            })
+                        }
                         className="w-12 h-12 rounded-2xl bg-yellow-500/20 border border-yellow-400/30 text-yellow-200 text-base shadow-[0_0_20px_rgba(250,204,21,0.25)] hover:bg-yellow-500/30 transition-all flex items-center justify-center"
                     >
                         <FontAwesomeIcon icon={faRotateRight} />
@@ -93,33 +111,64 @@ export default function Home() {
                     projectionConfig={{ scale: 150 }}
                     style={{ width: "100%", height: "100%" }}
                 >
-                    <ZoomableGroup zoom={zoom} center={[10, 10]}>
+                    <ZoomableGroup
+                        zoom={position.zoom}
+                        center={position.coordinates}
+                        onMoveEnd={(position) => {
+                            setPosition(position);
+                        }}
+                    >
                         <Geographies geography={geoUrl}>
                             {({ geographies }) =>
-                                geographies.map((geo) => (
-                                    <Geography
-                                        key={geo.rsmKey}
-                                        geography={geo}
-                                        style={{
-                                            default: {
-                                                fill: "#1e293b",
-                                                stroke: "#334155",
-                                                strokeWidth: 0.5,
-                                                outline: "none",
-                                            },
-                                            hover: {
-                                                fill: "#334155",
-                                                stroke: "#64748b",
-                                                strokeWidth: 0.7,
-                                                outline: "none",
-                                            },
-                                            pressed: {
-                                                fill: "#475569",
-                                                outline: "none",
-                                            },
-                                        }}
-                                    />
-                                ))
+                                geographies.map((geo) => {
+                                    const geoName = geo.properties.name;
+
+                                    const matchedCountry = visibleCountries.find(
+                                        (country) =>
+                                            country.country === geoName ||
+                                            country.countryCode === geo.properties.ISO_A2
+                                    );
+
+                                    return (
+                                        <Geography
+                                            key={geo.rsmKey}
+                                            geography={geo}
+                                            onClick={() => {
+                                                if (matchedCountry) {
+                                                    setSelectedCountry(matchedCountry);
+                                                }
+                                            }}
+                                            style={{
+                                                default: {
+                                                    fill: matchedCountry
+                                                        ? matchedCountry.color || "#3b82f6"
+                                                        : "#1e293b",
+                                                    stroke: "#334155",
+                                                    strokeWidth: 0.5,
+                                                    outline: "none",
+                                                    cursor: matchedCountry ? "pointer" : "default",
+                                                    opacity: matchedCountry ? 0.65 : 1,
+                                                },
+                                                hover: {
+                                                    fill: matchedCountry
+                                                        ? matchedCountry.color || "#3b82f6"
+                                                        : "#334155",
+                                                    stroke: "#ffffff",
+                                                    strokeWidth: matchedCountry ? 1 : 0.7,
+                                                    outline: "none",
+                                                    cursor: matchedCountry ? "pointer" : "default",
+                                                    opacity: 0.95,
+                                                },
+                                                pressed: {
+                                                    fill: matchedCountry
+                                                        ? matchedCountry.color || "#3b82f6"
+                                                        : "#475569",
+                                                    outline: "none",
+                                                },
+                                            }}
+                                        />
+                                    );
+                                })
                             }
                         </Geographies>
 
@@ -139,17 +188,19 @@ export default function Home() {
                                         onClick={() => setSelectedCountry(country)}
                                         className="cursor-pointer"
                                     >
+                                        {/* Glow */}
                                         <circle
-                                            r={8}
+                                            r={5.5}
                                             fill={country.color || "#3b82f6"}
-                                            opacity={0.2}
+                                            opacity={0.12}
                                         />
 
+                                        {/* Main dot */}
                                         <circle
-                                            r={4}
+                                            r={2.8}
                                             fill={country.color || "#3b82f6"}
                                             stroke="#ffffff"
-                                            strokeWidth={1}
+                                            strokeWidth={0.8}
                                         />
 
                                         <text
@@ -237,13 +288,12 @@ export default function Home() {
                                         Difficulty
                                     </p>
                                     <p
-                                        className={`font-bold ${
-                                            selectedCountry.difficulty === "Easy"
-                                                ? "text-green-400"
-                                                : selectedCountry.difficulty === "Medium"
-                                                    ? "text-yellow-400"
-                                                    : "text-red-400"
-                                        }`}
+                                        className={`font-bold ${selectedCountry.difficulty === "Easy"
+                                            ? "text-green-400"
+                                            : selectedCountry.difficulty === "Medium"
+                                                ? "text-yellow-400"
+                                                : "text-red-400"
+                                            }`}
                                     >
                                         {selectedCountry.difficulty}
                                     </p>
@@ -263,46 +313,42 @@ export default function Home() {
                                 <button
                                     onClick={() =>
                                         navigate(
-                                            `/country/${
-                                                selectedCountry.id ||
-                                                selectedCountry.country_id ||
-                                                selectedCountry._id
+                                            `/country/${selectedCountry.id ||
+                                            selectedCountry.country_id ||
+                                            selectedCountry._id
                                             }`
                                         )
                                     }
                                     className="w-full py-3 rounded-2xl font-bold text-white transition-all hover:scale-[1.01]"
                                     style={{
-                                        background: `linear-gradient(135deg, ${
-                                            selectedCountry.color || "#3b82f6"
-                                        }cc, ${selectedCountry.color || "#3b82f6"}88)`,
-                                        border: `1px solid ${
-                                            selectedCountry.color || "#3b82f6"
-                                        }55`,
+                                        background: `linear-gradient(135deg, ${selectedCountry.color || "#3b82f6"
+                                            }cc, ${selectedCountry.color || "#3b82f6"}88)`,
+                                        border: `1px solid ${selectedCountry.color || "#3b82f6"
+                                            }55`,
                                     }}
                                 >
-                                    <FontAwesomeIcon
+                                    {/* <FontAwesomeIcon
                                         icon={faEarthAfrica}
                                         className="mr-2"
-                                    />
+                                    /> */}
                                     View Country Details
                                 </button>
 
                                 <button
                                     onClick={() =>
                                         navigate(
-                                            `/compare?add=${
-                                                selectedCountry.id ||
-                                                selectedCountry.country_id ||
-                                                selectedCountry._id
+                                            `/compare?add=${selectedCountry.id ||
+                                            selectedCountry.country_id ||
+                                            selectedCountry._id
                                             }`
                                         )
                                     }
                                     className="w-full py-3 rounded-2xl font-bold bg-blue-500/20 text-blue-300 border border-blue-400/30 hover:bg-blue-500/30 transition-all"
                                 >
-                                    <FontAwesomeIcon
+                                    {/* <FontAwesomeIcon
                                         icon={faScaleBalanced}
                                         className="mr-2"
-                                    />
+                                    /> */}
                                     Add to Compare
                                 </button>
                             </div>
