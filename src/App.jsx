@@ -1,8 +1,3 @@
-
-
-
-
-
 import { createBrowserRouter, RouterProvider, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './Components/Layout';
 import  Home  from './Pages/Home';
