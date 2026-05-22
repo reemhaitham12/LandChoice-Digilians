@@ -37,18 +37,18 @@ export default function FiltersPanel({ filters, onChange }) {
           ))}
         </fieldset>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 ">
           <label htmlFor="f-difficulty" className="text-slate-400 text-sm font-medium">Difficulty</label>
           <select
             id="f-difficulty"
             value={filters.difficulty}
             onChange={(e) => onChange('difficulty', e.target.value)}
-            className="bg-dark-900 border border-white/20 text-white rounded-xl px-4 py-2 focus:outline-none focus:border-primary text-sm"
+            className="bg-dark-900 border border-white/20 text-white rounded-xl px-4 py-2 focus:outline-none focus:border-indigo-500 text-sm"
           >
-            <option value="all">All Levels</option>
-            <option value="Easy">Easy</option>
-            <option value="Medium">Medium</option>
-            <option value="Hard">Hard</option>
+            <option className='bg-gray-900' value="all">All Levels</option>
+            <option className='bg-gray-900' value="Easy">Easy</option>
+            <option className='bg-gray-900' value="Medium">Medium</option>
+            <option className='bg-gray-900' value="Hard">Hard</option>
           </select>
         </div>
 
@@ -58,11 +58,11 @@ export default function FiltersPanel({ filters, onChange }) {
             id="f-sort"
             value={filters.sortBy}
             onChange={(e) => onChange('sortBy', e.target.value)}
-            className="bg-dark-900 border border-white/20 text-white rounded-xl px-4 py-2 focus:outline-none focus:border-primary text-sm"
+            className="bg-dark-900 border border-white/20 text-white rounded-xl px-4 py-2 focus:outline-none focus:border-indigo-500  text-sm"
           >
-            <option value="status">Best Match</option>
-            <option value="income">Income Required</option>
-            <option value="costOfLiving">Cost of Living</option>
+            <option className='bg-gray-900' value="status">Best Match</option>
+            <option className='bg-gray-900' value="income">Income Required</option>
+            <option className='bg-gray-900' value="costOfLiving">Cost of Living</option>
           </select>
         </div>
       </div>

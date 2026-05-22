@@ -1,108 +1,107 @@
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCheckCircle, faTimesCircle, faExclamationCircle,
-} from '@fortawesome/free-solid-svg-icons';
-import comparisonService from '../../Services/comparisonService';
+import { faCheckCircle, faTimesCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { THRESHOLDS } from '../../hooks/useSalaryFit';
 
 function getStatusIcon(status) {
   switch (status) {
-    case 'Eligible':     return <FontAwesomeIcon icon={faCheckCircle}       className="w-5 h-5 text-green-400" />;
-    case 'Close':        return <FontAwesomeIcon icon={faExclamationCircle} className="w-5 h-5 text-yellow-400" />;
-    case 'Not Eligible': return <FontAwesomeIcon icon={faTimesCircle}       className="w-5 h-5 text-red-400" />;
+    case 'Eligible':     return <FontAwesomeIcon icon={faCheckCircle}       className="text-green-400 text-lg" />;
+    case 'Close':        return <FontAwesomeIcon icon={faExclamationCircle} className="text-yellow-400 text-lg" />;
+    case 'Not Eligible': return <FontAwesomeIcon icon={faTimesCircle}       className="text-red-400 text-lg" />;
     default:             return null;
   }
 }
 
-function getStatusColor(status) {
+function statusBadgeClass(status) {
   return {
-    'Eligible':     'border-green-500/30 bg-green-500/10',
-    'Close':        'border-yellow-500/30 bg-yellow-500/10',
-    'Not Eligible': 'border-red-500/30 bg-red-500/10',
-  }[status] ?? 'border-white/10';
+    'Eligible':     'bg-green-500/20 text-green-400 border border-green-500/30',
+    'Close':        'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
+    'Not Eligible': 'bg-red-500/20 text-red-400 border border-red-500/30',
+  }[status] ?? '';
 }
 
-function getDifficultyColor(difficulty) {
+function difficultyBadgeClass(d) {
   return {
-    'Easy':   'bg-green-500/20 text-green-400',
-    'Medium': 'bg-yellow-500/20 text-yellow-400',
-    'Hard':   'bg-red-500/20 text-red-400',
-  }[difficulty] ?? '';
+    Easy:   'bg-green-500/20 text-green-400',
+    Medium: 'bg-yellow-500/20 text-yellow-400',
+    Hard:   'bg-red-500/20 text-red-400',
+  }[d] ?? 'bg-slate-500/20 text-slate-400';
 }
 
-function getProgressBarColor(percentage) {
-  if (percentage >= THRESHOLDS.ELIGIBLE) return 'bg-green-500';
-  if (percentage >= THRESHOLDS.CLOSE)    return 'bg-yellow-500';
+function barColor(pct) {
+  if (pct >= THRESHOLDS.ELIGIBLE) return 'bg-green-500';
+  if (pct >= THRESHOLDS.CLOSE)    return 'bg-yellow-500';
   return 'bg-red-500';
 }
 
+function cardBorderColor(status) {
+  return {
+    'Eligible':     'border-white/8',
+    'Close':        'border-yellow-500/20',
+    'Not Eligible': 'border-red-500/20',
+  }[status] ?? 'border-white/8';
+}
+
 export default function ResultCard({ result, index }) {
-  const costText = comparisonService.getCostOfLivingText(result.additionalInfo.costOfLiving);
+  const pct = Math.min(result.percentage, 100);
 
   return (
     <motion.article
-      key={result.countryId}
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className={`glass-card p-6 rounded-2xl border ${getStatusColor(result.status)}`}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.04 }}
+      className={`bg-dark-800 border ${cardBorderColor(result.status)} rounded-2xl p-6 mb-4`}
     >
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex-grow">
+      {/* Top row: flag-circle icon + country name + badges */}
+      <div className="flex items-center gap-3 mb-1 flex-wrap">
+        {getStatusIcon(result.status)}
+        <h3 className="text-xl font-bold text-white">{result.country}</h3>
+        <span className={`px-3 py-0.5 rounded-full text-xs font-bold ${statusBadgeClass(result.status)}`}>
+          {result.status}
+        </span>
+        <span className={`px-3 py-0.5 rounded-full text-xs font-bold ${difficultyBadgeClass(result.additionalInfo.difficulty)}`}>
+          {result.additionalInfo.difficulty}
+        </span>
+      </div>
 
-          {/* Header row */}
-          <div className="flex items-center gap-3 mb-2 flex-wrap">
-            {getStatusIcon(result.status)}
-            <h3 className="text-xl font-bold text-white">{result.country}</h3>
-            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-              result.status === 'Eligible'     ? 'bg-green-500/20 text-green-400' :
-              result.status === 'Close'        ? 'bg-yellow-500/20 text-yellow-400' :
-                                                 'bg-red-500/20 text-red-400'
-            }`}>{result.status}</span>
-            <span className={`px-2 py-1 rounded text-xs font-medium ${getDifficultyColor(result.additionalInfo.difficulty)}`}>
-              {result.additionalInfo.difficulty}
-            </span>
-          </div>
+      {/* Visa name */}
+      <p className="text-slate-400 text-sm mb-4">{result.visaName}</p>
 
-          <p className="text-slate-400 text-sm mb-3">{result.visaName}</p>
-
-          {/* Progress bar */}
-          <div className="mb-3" role="meter" aria-valuenow={result.percentage} aria-valuemin={0} aria-valuemax={100} aria-label="Income match percentage">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-slate-400">Income Match</span>
-              <span className="text-white font-bold">{result.percentage}%</span>
-            </div>
-            <div className="w-full bg-dark-900 rounded-full h-2 overflow-hidden">
-              <div
-                className={`h-full ${getProgressBarColor(result.percentage)} transition-all`}
-                style={{ width: `${Math.min(result.percentage, 100)}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Details grid */}
-          <dl className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-            {[
-              { label: 'Required',       value: result.requiredOriginal },
-              { label: 'Your Income',    value: `$${result.userIncome.toLocaleString()}` },
-              { label: 'Processing',     value: result.additionalInfo.processingTime },
-              { label: 'Cost of Living', value: `${costText} (${result.additionalInfo.costOfLiving})` }, // ✅ Fix 3: human-readable
-            ].map(({ label, value }) => (
-              <div key={label}>
-                <dt className="text-slate-500 text-xs">{label}</dt>
-                <dd className="text-white font-bold">{value}</dd>
-              </div>
-            ))}
-          </dl>
-
-          {/* Message */}
-          <div className="mt-4 p-4 bg-dark-900/50 rounded-xl border border-white/5">
-            <p className="text-white text-sm font-medium mb-2">{result.message}</p>
-            <p className="text-slate-400 text-xs">{result.recommendation}</p>
-          </div>
-
+      {/* Progress bar */}
+      <div className="mb-5">
+        <div className="flex justify-between text-xs mb-1.5">
+          <span className="text-slate-400">Income Match</span>
+          <span className="text-white font-bold">{result.percentage}%</span>
         </div>
+        <div className="w-full h-2 bg-dark-900 rounded-full overflow-hidden">
+          <motion.div
+            className={`h-full ${barColor(result.percentage)} rounded-full`}
+            initial={{ width: 0 }}
+            animate={{ width: `${pct}%` }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: index * 0.04 + 0.2 }}
+          />
+        </div>
+      </div>
+
+      {/* 4-col details */}
+      <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        {[
+          { label: 'Required',       value: result.requiredOriginal },
+          { label: 'Your Income',    value: `$${result.userIncome.toLocaleString()}` },
+          { label: 'Processing',     value: result.additionalInfo.processingTime },
+          { label: 'Cost of Living', value: result.additionalInfo.costOfLiving },
+        ].map(({ label, value }) => (
+          <div key={label}>
+            <dt className="text-slate-500 text-xs mb-0.5">{label}</dt>
+            <dd className="text-white font-bold text-sm">{value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {/* Message box */}
+      <div className="bg-dark-900/70 border border-white/5 rounded-xl px-5 py-4">
+        <p className="text-white text-sm font-semibold mb-1">{result.message}</p>
+        <p className="text-slate-400 text-xs leading-relaxed">{result.recommendation}</p>
       </div>
     </motion.article>
   );
