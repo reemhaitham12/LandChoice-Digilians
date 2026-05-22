@@ -1,5 +1,5 @@
 import Navbar from "../Components/Navbar";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { FaHome, FaChartLine, FaUsers, FaCog } from "react-icons/fa";
 
 const Dashboard = () => {

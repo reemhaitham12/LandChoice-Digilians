@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import * as Yup from "yup";
 import { FaShieldAlt } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import * as Yup from "yup";
 import { MdEmail } from "react-icons/md";
 import { FaKey } from "react-icons/fa";
