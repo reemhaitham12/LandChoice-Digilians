@@ -3,11 +3,13 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import AuthProvider from "./Context/AuthContext";
-
+import { VisaProvider } from "./context/visaContext";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-      <App />
+      <VisaProvider>
+        <App />
+      </VisaProvider>
     </AuthProvider>
   </React.StrictMode>
 );
