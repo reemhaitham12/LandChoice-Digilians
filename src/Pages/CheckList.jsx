@@ -305,11 +305,10 @@ const Checklist = () => {
             </button>
 
             <div
-              className={`absolute left-0 right-0 mt-2 rounded-xl overflow-hidden z-20 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform origin-top shadow-2xl shadow-black/50 ring-1 ring-white/10 backdrop-blur-md bg-[#111827]/95 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent ${
-                open
+              className={`absolute left-0 right-0 mt-2 rounded-xl overflow-hidden z-20 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform origin-top shadow-2xl shadow-black/50 ring-1 ring-white/10 backdrop-blur-md bg-[#111827]/95 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent ${open
                   ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
                   : 'opacity-0 -translate-y-3 scale-[0.98] pointer-events-none'
-              }`}
+                }`}
             >
               {visaData.map((country, idx) => (
                 <div
@@ -319,9 +318,8 @@ const Checklist = () => {
                     setOpen(false);
                   }}
                   style={{ transitionDelay: open ? `${idx * 25}ms` : '0ms' }}
-                  className={`px-4 py-3 cursor-pointer transition-all duration-300 ease-out border-b border-white/5 last:border-0 hover:bg-blue-500/10 hover:pl-6 text-sm sm:text-base text-gray-200 hover:text-white ${
-                    open ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
-                  }`}
+                  className={`px-4 py-3 cursor-pointer transition-all duration-300 ease-out border-b border-white/5 last:border-0 hover:bg-blue-500/10 hover:pl-6 text-sm sm:text-base text-gray-200 hover:text-white ${open ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
+                    }`}
                 >
                   <div className="flex items-center justify-between">
                     <span>{country.country} - {country.visaName}</span>
@@ -438,7 +436,7 @@ const Checklist = () => {
             {selectedCountry.requirements.map((req, index) => {
               const isChecked =
                 checkedItems[
-                  `${selectedCountry.country_id}_${index}`
+                `${selectedCountry.country_id}_${index}`
                 ] || false;
 
               return (

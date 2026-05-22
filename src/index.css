@@ -1,1 +1,103 @@
 @import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-300 font-sans antialiased selection:bg-blue-900 selection:text-white overflow-x-hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight text-white mb-2;
+  }
+
+  p {
+    @apply leading-relaxed;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)];
+  }
+
+  .glass-inner {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  .glass-card {
+    @apply bg-slate-800/80 backdrop-blur-lg border border-white/5 shadow-2xl transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply border-white/15 bg-slate-800/90;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-blue-500 to-yellow-400;
+  }
+
+  .btn-primary {
+    @apply bg-blue-500 hover:bg-blue-600 text-white transition-all duration-300 shadow-lg shadow-blue-500/25 active:scale-[0.98];
+  }
+
+  .glass-button {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all duration-300 active:scale-[0.98];
+  }
+
+  .glow-box {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+
+  .map-container {
+    height: 100%;
+    width: 100%;
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-950;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-700/80 rounded-full border-[2px] border-slate-950;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-blue-500/70;
+}
+
+/* Mapbox overrides */
+.mapboxgl-popup-content {
+  @apply bg-slate-800 text-white rounded-xl border border-white/10 p-0 shadow-xl;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  @apply border-t-slate-800;
+}
+
+.mapboxgl-ctrl-group {
+  @apply bg-slate-800 border fill-white border-white/10;
+}
+
+.mapboxgl-ctrl-group button+button {
+  @apply border-t-white/10;
+}
+
+.mapboxgl-ctrl button {
+  @apply opacity-80 transition-opacity;
+}
+
+.mapboxgl-ctrl button:hover {
+  @apply opacity-100 bg-white/5;
+}
+
+.mapboxgl-ctrl-icon {
+  filter: invert(1);
+}
