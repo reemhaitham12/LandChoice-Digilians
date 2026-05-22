@@ -16,6 +16,7 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import Loading from '../Components/Loading';
 
 const Checklist = () => {
   const [visaData, setVisaData] = useState([]);
@@ -61,9 +62,7 @@ const Checklist = () => {
 
   if (loading || !selectedCountry) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-white">
-        Loading...
-      </div>
+      <Loading />
     );
   }
 
@@ -266,7 +265,7 @@ const Checklist = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0f1e] text-white">
+    <div className="min-h-screen  text-white">
       <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10">

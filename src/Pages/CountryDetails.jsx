@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { visaData } from '../data/visaData';
+import { useVisa } from '../context/visaContext';
+import Loading from '../Components/Loading';
 import CountryHero from '../Components/country/CountryHero';
 import CountryStats from '../Components/country/CountryStats';
 import CountryTabs from '../Components/country/CountryTabs';
@@ -17,9 +18,20 @@ export default function CountryDetails() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
 
-  //  Read directly from local visaData — no backend needed
-  const country = visaData.find(c => c.id === id) ?? null;
+  const { visaData = [], loading } = useVisa();
 
+  //  Read directly from local visaData — no backend needed
+  const country =
+    visaData.find(
+      c =>
+        c.id === id ||
+        c.country_id === id ||
+        c._id === id
+    ) ?? null;
+
+  if (loading) {
+    return <Loading />;
+  }
   if (!country) {
     return (
       <div className="min-h-screen bg-dark-900 pt-32 flex items-center justify-center">
@@ -40,13 +52,13 @@ export default function CountryDetails() {
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'overview':     return <OverviewTab country={country} />;
-      case 'program':      return <ProgramTab country={country} />;
+      case 'overview': return <OverviewTab country={country} />;
+      case 'program': return <ProgramTab country={country} />;
       case 'requirements': return <RequirementsTab country={country} />;
-      case 'costs':        return <CostsTab country={country} />;
-      case 'procon':       return <ProsConsTab country={country} />;
-      case 'sources':      return <SourcesTab country={country} />;
-      default:             return null;
+      case 'costs': return <CostsTab country={country} />;
+      case 'procon': return <ProsConsTab country={country} />;
+      case 'sources': return <SourcesTab country={country} />;
+      default: return null;
     }
   };
 

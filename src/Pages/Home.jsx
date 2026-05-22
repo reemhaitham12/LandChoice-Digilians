@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useVisa } from "../context/visaContext";
+import Loading from "../Components/Loading";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -60,9 +61,7 @@ export default function Home() {
 
     if (loading) {
         return (
-            <div className="h-screen flex items-center justify-center bg-slate-950 text-white">
-                Loading...
-            </div>
+           <Loading/>
         );
     }
 
