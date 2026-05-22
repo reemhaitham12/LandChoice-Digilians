@@ -17,32 +17,18 @@ import {
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import Loading from '../Components/Loading';
+import { useVisa } from '../context/visaContext';
 
 const Checklist = () => {
-  const [visaData, setVisaData] = useState([]);
+  const { visaData = [], loading } = useVisa();
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [checkedItems, setCheckedItems] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
-
   useEffect(() => {
-    const fetchVisaData = async () => {
-      try {
-        const res = await fetch('https://back-end-pro.vercel.app/countries');
-        const data = await res.json();
-
-        setVisaData(data.countries);
-        setSelectedCountry(data.countries[0]);
-      } catch (err) {
-        setError('Failed to load data');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchVisaData();
-  }, []);
+    if (visaData.length > 0 && !selectedCountry) {
+      setSelectedCountry(visaData[0]);
+    }
+  }, [visaData, selectedCountry]);
 
   useEffect(() => {
     const saved = localStorage.getItem('visa-checklist');
@@ -63,14 +49,6 @@ const Checklist = () => {
   if (loading || !selectedCountry) {
     return (
       <Loading />
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-400">
-        {error}
-      </div>
     );
   }
 
@@ -305,8 +283,8 @@ const Checklist = () => {
 
             <div
               className={`absolute left-0 right-0 mt-2 rounded-xl overflow-hidden z-20 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform origin-top shadow-2xl shadow-black/50 ring-1 ring-white/10 backdrop-blur-md bg-[#111827]/95 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent ${open
-                  ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
-                  : 'opacity-0 -translate-y-3 scale-[0.98] pointer-events-none'
+                ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+                : 'opacity-0 -translate-y-3 scale-[0.98] pointer-events-none'
                 }`}
             >
               {visaData.map((country, idx) => (
