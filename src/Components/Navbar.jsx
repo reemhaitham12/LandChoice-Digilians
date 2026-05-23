@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 import {
   faGlobe,
@@ -28,6 +28,22 @@ export default function Navbar() {
     navigate("/login");
   };
 
+  const handleProtectedNav = (path) => {
+    setIsOpen(false);
+
+    if (path === "/") {
+      navigate("/");
+      return;
+    }
+
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(path);
+  };
+
   const navLinks = [
     { to: "/", label: "Map", icon: faMap },
     { to: "/explore", label: "Discover", icon: faSearch },
@@ -38,10 +54,9 @@ export default function Navbar() {
   ];
 
   const linkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${
-      isActive
-        ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
-        : "text-slate-400 hover:text-white hover:bg-white/5"
+    `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${isActive
+      ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+      : "text-slate-400 hover:text-white hover:bg-white/5"
     }`;
 
   return (
@@ -59,17 +74,24 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-2 bg-[#0f172a]/70 border border-white/10 rounded-full px-2 py-2 shadow-inner">
           {navLinks.map((link) => (
-            <NavLink key={link.to} to={link.to} className={linkClass}>
+            <button
+              key={link.to}
+              onClick={() => handleProtectedNav(link.to)}
+              className={linkClass({ isActive: window.location.pathname === link.to })}
+            >
               <FontAwesomeIcon icon={link.icon} />
               {link.label}
-            </NavLink>
+            </button>
           ))}
         </div>
 
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <>
-              <button className="w-11 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center">
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="w-11 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center"
+              >
                 <FontAwesomeIcon icon={faUser} />
               </button>
 
@@ -108,29 +130,33 @@ export default function Navbar() {
       </div>
 
       <div
-        className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-          isOpen ? "max-h-[520px] opacity-100 translate-y-0 mt-4" : "max-h-0 opacity-0 -translate-y-4"
-        }`}
+        className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? "max-h-[520px] opacity-100 translate-y-0 mt-4" : "max-h-0 opacity-0 -translate-y-4"
+          }`}
       >
         <div className="bg-[#0f172a]/95 border border-white/10 rounded-3xl p-4 shadow-2xl">
           <div className="flex flex-col gap-2">
             {navLinks.map((link) => (
-              <NavLink
+              <button
                 key={link.to}
-                to={link.to}
-                onClick={() => setIsOpen(false)}
-                className={linkClass}
+                onClick={() => handleProtectedNav(link.to)}
+                className={linkClass({ isActive: window.location.pathname === link.to })}
               >
                 <FontAwesomeIcon icon={link.icon} />
                 {link.label}
-              </NavLink>
+              </button>
             ))}
           </div>
 
           <div className="flex items-center gap-3 mt-4 pt-4 border-t border-white/10">
             {user ? (
               <>
-                <button  className="flex-1 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center">
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    navigate("/dashboard");
+                  }}
+                  className="flex-1 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center"
+                >
                   <FontAwesomeIcon icon={faUser} />
                 </button>
 

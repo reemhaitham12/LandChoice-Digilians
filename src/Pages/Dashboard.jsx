@@ -1,9 +1,13 @@
-import Navbar from "../Components/Navbar";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+import Loading from "../Components/Loading";
 import { FaHome, FaChartLine, FaUsers, FaCog } from "react-icons/fa";
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <Loading />;
+  }
 
   const stats = [
     { title: "Total Properties", value: "24", icon: FaHome, color: "from-yellow-400 to-orange-500" },
@@ -13,9 +17,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0B1120]">
-      <Navbar />
-      
+    <div className="min-h-screen pt-28">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">

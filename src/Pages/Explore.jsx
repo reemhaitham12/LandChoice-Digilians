@@ -12,6 +12,7 @@ import {
   faTimes,
   faChevronDown,
 } from '@fortawesome/free-solid-svg-icons';
+import Loading from '../Components/Loading';
 import apiService from '../Services/apiService';
 
 export default function Explore() {
@@ -28,7 +29,9 @@ export default function Explore() {
   });
 
   const [isSidebarOpen] = useState(true);
-
+  // if (loading) {
+  //   return <Loading />;
+  // }  // put comment here to loading skeleton when loading is true
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
@@ -69,15 +72,14 @@ export default function Explore() {
   return (
     <div className="pt-32 min-h-screen bg-slate-950">
       <div className="max-w-[1600px] mx-auto px-6 pb-12 flex flex-col lg:flex-row gap-8">
-        
+
         {/* Sidebar */}
         <aside
-          className={`lg:w-80 flex-shrink-0 transition-all duration-300 ${
-            isSidebarOpen ? 'block' : 'hidden lg:block'
-          }`}
+          className={`lg:w-80 flex-shrink-0 transition-all duration-300 ${isSidebarOpen ? 'block' : 'hidden lg:block'
+            }`}
         >
           <div className="glass-card p-6 rounded-3xl sticky top-28 border border-white/10 shadow-xl">
-            
+
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-2 text-white font-bold text-lg">
                 <FontAwesomeIcon
@@ -201,11 +203,10 @@ export default function Explore() {
                     <button
                       key={val}
                       onClick={() => updateFilter('qol', val)}
-                      className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${
-                        filters.qol === val
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${filters.qol === val
                           ? 'bg-blue-500 text-white border-blue-500'
                           : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
-                      }`}
+                        }`}
                     >
                       {val === 0 ? 'All' : val}
                     </button>
@@ -224,11 +225,10 @@ export default function Explore() {
                     <button
                       key={mode}
                       onClick={() => updateFilter('processing', mode)}
-                      className={`py-2 rounded-lg text-xs font-bold border transition-all ${
-                        filters.processing === mode
+                      className={`py-2 rounded-lg text-xs font-bold border transition-all ${filters.processing === mode
                           ? 'bg-blue-500/20 text-blue-400 border-blue-400/40'
                           : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
-                      }`}
+                        }`}
                     >
                       {mode}
                     </button>
@@ -242,10 +242,10 @@ export default function Explore() {
 
         {/* Main */}
         <main className="flex-grow">
-          
+
           {/* Header */}
           <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            
+
             <div>
               <h1 className="text-4xl font-bold text-white mb-2">
                 Explore{' '}
@@ -279,10 +279,10 @@ export default function Explore() {
 
           {/* Results */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            
+
             <AnimatePresence>
 
-              {loading ? (
+              {loading ? ( // put comment here to loading skeleton when loading is true
                 Array(6)
                   .fill(0)
                   .map((_, i) => (
@@ -293,7 +293,8 @@ export default function Explore() {
                       className="h-80 rounded-3xl bg-white/5 animate-pulse"
                     />
                   ))
-              ) : countries.length > 0 ? (
+              ) :  // put comment here to loading skeleton when loading is true
+              countries.length > 0 ? (
 
                 countries.map((country) => (
                   <CountryCard
@@ -353,7 +354,7 @@ const CountryCard = ({ country }) => {
     >
       <div className="p-6 flex-grow">
         <div className="flex justify-between items-start mb-4">
-          
+
           <div>
             <h3 className="text-2xl font-bold text-white">
               {country.country}

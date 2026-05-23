@@ -17,14 +17,17 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import Loading from '../Components/Loading';
+import { useVisa } from '../context/visaContext';
 
 const Checklist = () => {
+
   const { visaData, loading } = useVisa();
+
 
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [checkedItems, setCheckedItems] = useState({});
   const [open, setOpen] = useState(false);
-
   useEffect(() => {
     if (visaData.length > 0 && !selectedCountry) {
       setSelectedCountry(visaData[0]);
@@ -77,6 +80,7 @@ const Checklist = () => {
           <span className="text-slate-400 text-sm">Preparing checklist...</span>
         </div>
       </div>
+
     );
   }
 
@@ -255,6 +259,8 @@ const Checklist = () => {
 
   return (
     <div className="min-h-screen text-slate-100">
+
+
       <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
         {/* Header — نفس style الـ News */}
         <div className="text-center mb-8 sm:mb-10">
@@ -293,6 +299,7 @@ const Checklist = () => {
             </button>
 
             <div
+
               className={`absolute left-0 right-0 mt-2 rounded-xl overflow-hidden z-20 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] transform origin-top shadow-2xl shadow-black/50 ring-1 ring-white/10 backdrop-blur-md bg-[#111827]/95 max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent ${
                 open
                   ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
