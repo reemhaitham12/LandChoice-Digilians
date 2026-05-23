@@ -43,23 +43,21 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await api.post("/login", { email, password });
       const { token, user: userData } = response.data;
-      
+
       const userToStore = {
         ...userData,
         token,
       };
-      
+
       setUser(userToStore);
-      
-      if (rememberMe) {
-        localStorage.setItem("landchoice_user", JSON.stringify(userToStore));
-        localStorage.setItem("landchoice_token", token);
-      }
-      
+
+      localStorage.setItem("landchoice_user", JSON.stringify(userToStore));
+      localStorage.setItem("landchoice_token", token);
+
       return { success: true, data: userToStore };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
+      const errorMessage =
+        error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
         "Login failed. Please try again.";
@@ -76,8 +74,8 @@ const AuthProvider = ({ children }) => {
       });
       return { success: true, message: response.data?.message || "Registered successfully!" };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
+      const errorMessage =
+        error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
         "Registration failed. Please try again.";
@@ -90,8 +88,8 @@ const AuthProvider = ({ children }) => {
       const response = await api.post("/verify-code", { email, code });
       return { success: true, message: response.data?.message || "Email verified!" };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
+      const errorMessage =
+        error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
         "Verification failed. Please try again.";
@@ -104,8 +102,8 @@ const AuthProvider = ({ children }) => {
       const response = await api.post("/resend-verification-code", { email });
       return { success: true, message: response.data?.message || "Code resent!" };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
+      const errorMessage =
+        error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
         "Failed to resend code. Please try again.";
@@ -127,8 +125,8 @@ const AuthProvider = ({ children }) => {
         message: response.data?.message || "Reset code sent to email.",
       };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
+      const errorMessage =
+        error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
         "Failed to send reset code. Please try again.";
@@ -141,8 +139,8 @@ const AuthProvider = ({ children }) => {
       const response = await api.post("/verify-reset-code", { email, reset_code: resetCode });
       return { success: true, message: response.data?.message || "Code verified!" };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
+      const errorMessage =
+        error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
         "Invalid or expired code.";
@@ -161,8 +159,8 @@ const AuthProvider = ({ children }) => {
         message: response.data?.message || "Password reset successfully!",
       };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
+      const errorMessage =
+        error.response?.data?.error ||
         error.response?.data?.message ||
         error.message ||
         "Failed to reset password. Please try again.";
