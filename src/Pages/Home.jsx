@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useVisa } from "../context/visaContext";
+import { useAuth } from "../context/AuthContext";
 import Loading from "../Components/Loading";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -47,6 +48,16 @@ export default function Home() {
     const { visaData = [], loading } = useVisa();
     const navigate = useNavigate();
 
+    const { user } = useAuth();
+
+    const protectedNavigate = (path) => {
+        if (!user) {
+            navigate("/login");
+            return;
+        }
+
+        navigate(path);
+    };
     const countries = Array.isArray(visaData)
         ? visaData
         : Array.isArray(visaData?.countries)
@@ -427,13 +438,12 @@ export default function Home() {
                                         Difficulty
                                     </p>
                                     <p
-                                        className={`font-bold ${
-                                            selectedCountry.difficulty === "Easy"
-                                                ? "text-green-400"
-                                                : selectedCountry.difficulty === "Medium"
-                                                    ? "text-yellow-400"
-                                                    : "text-red-400"
-                                        }`}
+                                        className={`font-bold ${selectedCountry.difficulty === "Easy"
+                                            ? "text-green-400"
+                                            : selectedCountry.difficulty === "Medium"
+                                                ? "text-yellow-400"
+                                                : "text-red-400"
+                                            }`}
                                     >
                                         {selectedCountry.difficulty}
                                     </p>
@@ -452,22 +462,14 @@ export default function Home() {
                             <div className="mt-5 flex flex-col gap-3">
                                 <button
                                     onClick={() =>
-                                        navigate(
-                                            `/country/${
-                                                selectedCountry.id ||
-                                                selectedCountry.country_id ||
-                                                selectedCountry._id
-                                            }`
-                                        )
+                                        protectedNavigate(`/country/${selectedCountry.id || selectedCountry.country_id || selectedCountry._id}`)
                                     }
                                     className="w-full py-3 rounded-2xl font-bold text-white transition-all hover:scale-[1.01]"
                                     style={{
-                                        background: `linear-gradient(135deg, ${
-                                            selectedCountry.color || "#3b82f6"
-                                        }cc, ${selectedCountry.color || "#3b82f6"}88)`,
-                                        border: `1px solid ${
-                                            selectedCountry.color || "#3b82f6"
-                                        }55`,
+                                        background: `linear-gradient(135deg, ${selectedCountry.color || "#3b82f6"
+                                            }cc, ${selectedCountry.color || "#3b82f6"}88)`,
+                                        border: `1px solid ${selectedCountry.color || "#3b82f6"
+                                            }55`,
                                     }}
                                 >
                                     View Country Details
@@ -475,13 +477,7 @@ export default function Home() {
 
                                 <button
                                     onClick={() =>
-                                        navigate(
-                                            `/compare?add=${
-                                                selectedCountry.id ||
-                                                selectedCountry.country_id ||
-                                                selectedCountry._id
-                                            }`
-                                        )
+                                        protectedNavigate(`/compare?add=${selectedCountry.id || selectedCountry.country_id || selectedCountry._id}`)
                                     }
                                     className="w-full py-3 rounded-2xl font-bold bg-blue-500/20 text-blue-300 border border-blue-400/30 hover:bg-blue-500/30 transition-all"
                                 >
