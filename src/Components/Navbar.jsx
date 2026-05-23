@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {  Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../context/AuthContext";
 
@@ -88,7 +88,10 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-4">
           {user ? (
             <>
-              <button className="w-11 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center">
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="w-11 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center"
+              >
                 <FontAwesomeIcon icon={faUser} />
               </button>
 
@@ -147,7 +150,13 @@ export default function Navbar() {
           <div className="flex items-center gap-3 mt-4 pt-4 border-t border-white/10">
             {user ? (
               <>
-                <button className="flex-1 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center">
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    navigate("/dashboard");
+                  }}
+                  className="flex-1 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center"
+                >
                   <FontAwesomeIcon icon={faUser} />
                 </button>
 
