@@ -7,7 +7,7 @@ export function VisaProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/countries")
+    fetch("/countries")
       .then((res) => res.json())
       .then((data) => {
          // console.log("API DATA:", data);
