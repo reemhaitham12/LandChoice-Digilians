@@ -10,7 +10,7 @@ export function VisaProvider({ children }) {
     fetch("/api/countries")
       .then((res) => res.json())
       .then((data) => {
-        // console.log("API DATA:", data);
+         // console.log("API DATA:", data);
 
         const countries = Array.isArray(data)
           ? data
