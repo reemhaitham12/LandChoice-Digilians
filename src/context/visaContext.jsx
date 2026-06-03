@@ -7,10 +7,10 @@ export function VisaProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://back-end-pro.vercel.app/countries")
+    fetch(`${import.meta.env.VITE_API_URL}/countries`)
       .then((res) => res.json())
       .then((data) => {
-         // console.log("API DATA:", data);
+        // console.log("API DATA:", data);
 
         const countries = Array.isArray(data)
           ? data
