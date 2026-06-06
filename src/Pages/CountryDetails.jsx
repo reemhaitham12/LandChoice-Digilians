@@ -17,7 +17,7 @@ export default function CountryDetails() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("overview");
 
-  // ✅ Use shared context — no duplicate fetch
+ 
   const { visaData, loading } = useVisa();
 
   const countries = Array.isArray(visaData)
@@ -26,7 +26,13 @@ export default function CountryDetails() {
     ? visaData.countries
     : [];
 
-  const country = countries.find(c => c.id === id || c.country_id === id) ?? null;
+
+  const country = countries.find(c => 
+    String(c.country_id) === String(id) || 
+    String(c._id) === String(id) || 
+    String(c.id) === String(id) ||
+    c.country?.toLowerCase() === String(id).toLowerCase()
+  ) ?? null;
 
   /* ── Loading ── */
   if (loading) {
@@ -76,7 +82,7 @@ export default function CountryDetails() {
       {/* Background colour glow */}
       <div
         className="fixed top-0 left-0 w-full h-96 pointer-events-none opacity-10"
-        style={{ background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${country.color}, transparent)` }}
+        style={{ background: `radial-gradient(ellipse 80% 60% at 50% 0%, ${country.color || '#3b82f6'}, transparent)` }}
       />
 
       <CountryHero  country={country} navigate={navigate} />
