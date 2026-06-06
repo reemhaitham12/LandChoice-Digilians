@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import Loading from '../Components/Loading';
-import { useVisa } from '../context/visaContext';
+
 
 const Checklist = () => {
 
@@ -262,7 +262,7 @@ const Checklist = () => {
 
 
       <div className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
-        {/* Header — نفس style الـ News */}
+       
         <div className="text-center mb-8 sm:mb-10">
           <div className="flex items-center justify-center gap-2 mt-12 py-8">
             <FileText className="text-blue-400 w-6 h-6 sm:w-8 sm:h-8" />

@@ -17,6 +17,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import VerifyResetCode from "./Pages/VerifyResetCode";
 import ResetPassword from "./Pages/ResetPassword";
 import Dashboard from "./Pages/Dashboard";
+import About from "./Pages/About";
 
 const HomeRedirect = () => {
   const { user } = useAuth();
@@ -35,6 +36,7 @@ const routers = createBrowserRouter([
       { path: 'compare', element: <ComparyCountry /> },
       { path: 'checklist', element: <Checklist /> },
       { path: 'news', element: <News /> },
+      { path: 'about', element: <About /> },
       { path: 'country/:id', element: <CountryDetails /> },
 
       { path: 'login', element: <Login /> },
