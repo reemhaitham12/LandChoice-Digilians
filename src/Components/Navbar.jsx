@@ -15,6 +15,7 @@ import {
   faUser,
   faBars,
   faXmark,
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
@@ -46,11 +47,13 @@ export default function Navbar() {
 
   const navLinks = [
     { to: "/", label: "Map", icon: faMap },
+    { to: "/about", label: "About", icon: faInfoCircle },
     { to: "/explore", label: "Discover", icon: faSearch },
     { to: "/salary-fit", label: "Salary Fit", icon: faDollarSign },
     { to: "/compare", label: "Compare", icon: faProjectDiagram },
     { to: "/checklist", label: "Checklist", icon: faCheckSquare },
     { to: "/news", label: "News", icon: faRss },
+   
   ];
 
   const linkClass = ({ isActive }) =>
