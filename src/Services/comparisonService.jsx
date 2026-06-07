@@ -34,7 +34,7 @@ class ComparisonService {
 
     return {
       country:          visa.country,
-      countryId:        visa.country_id,   // ✅ API field
+      countryId:        visa.country_id,   //  API field
       visaName:         visa.visaName,
       required:         requiredIncomeUSD,
       requiredOriginal: `${visa.currencySymbol}${visa.minIncomeMonthly.toLocaleString()}`,
@@ -52,7 +52,7 @@ class ComparisonService {
     };
   }
 
-  // ✅ Now receives countries array from API instead of reading local visaData
+  //  Now receives countries array from API instead of reading local visaData
   checkAllCountries(userIncomeMonthly, countries) {
     return countries
       .map(visa => this.checkSalaryFit(userIncomeMonthly, visa))
