@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import Loading from '../Components/Loading';
-import { useVisa } from '../context/visaContext';
 
 const Checklist = () => {
 
