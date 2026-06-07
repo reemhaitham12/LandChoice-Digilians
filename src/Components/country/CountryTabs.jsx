@@ -1,28 +1,37 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faInfoCircle, faFileAlt, faCheckCircle, 
+  faDollarSign, faChartBar, faExternalLinkAlt 
+} from '@fortawesome/free-solid-svg-icons';
+
 const TABS = [
-  { id: 'overview',     label: 'Overview'      },
-  { id: 'program',      label: 'Program'       },
-  { id: 'requirements', label: 'Requirements'  },
-  { id: 'costs',        label: 'Costs'         },
-  { id: 'procon',       label: 'Pros & Cons'   },
-  { id: 'sources',      label: 'Sources'       },
+  { id: 'overview', label: 'Overview', icon: faInfoCircle },
+  { id: 'program', label: 'Program', icon: faFileAlt },
+  { id: 'requirements', label: 'Requirements', icon: faCheckCircle },
+  { id: 'costs', label: 'Costs & Living', icon: faDollarSign },
+  { id: 'procon', label: 'Pros & Cons', icon: faChartBar },
+  { id: 'sources', label: 'Sources', icon: faExternalLinkAlt },
 ];
 
 export default function CountryTabs({ activeTab, setActiveTab }) {
   return (
-    <div className="flex gap-2 mb-6 overflow-x-auto border-b border-white/10">
-      {TABS.map(({ id, label }) => (
-        <button
-          key={id}
-          onClick={() => setActiveTab(id)}
-          className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-            activeTab === id
-              ? 'border-primary text-white'
-              : 'border-transparent text-slate-400 hover:text-white'
-          }`}
-        >
-          {label}
-        </button>
-      ))}
+    <div className="max-w-5xl mx-auto px-6 mb-6">
+      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+        {TABS.map(({ id, label, icon }) => (
+          <button
+            key={id}
+            onClick={() => setActiveTab(id)}
+            className={`flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm transition-all whitespace-nowrap ${
+              activeTab === id
+                ? 'bg-primary/20 text-primary border border-primary/30'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <FontAwesomeIcon icon={icon} />
+            {label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

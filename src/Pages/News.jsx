@@ -3,17 +3,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRss, faExternalLinkAlt, faCalendarAlt, faFilter, faSyncAlt, faSpinner, faGlobe, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import newsService from '../services/newsService';
-import { useVisa } from '../context/visaContext'; // ← بدل الـ JSON
+import { useVisa } from '../context/visaContext'; 
 
 const News = () => {
-  const { visaData, loading: visaLoading } = useVisa(); // ← من الـ API
+  const { visaData, loading: visaLoading } = useVisa(); 
   
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
 
-  // ← بناء قائمة الدول من الـ API (visaData)
+
   const countries = [
     { id: 'all', name: 'All Countries' },
     ...(visaData ? visaData.map(v => ({ id: v.country, name: v.country })) : [])
@@ -47,7 +47,7 @@ const News = () => {
     fetchNews();
   };
 
-  // ← لو الـ visa data لسه بتحمل من الـ API
+
   if (visaLoading) {
     return (
       <div className="w-full max-w-7xl mx-auto p-6 md:p-12 mb-10">
