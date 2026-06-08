@@ -1,150 +1,86 @@
 import axios from 'axios';
 
-/**
- * Service for fetching real-time news about visa requirements, travel documents, and entry policies
- * Uses NewsAPI.org for news aggregation
- */
 class NewsService {
   constructor() {
-    this.baseURL = 'https://newsapi.org/v2';
-    
-    // To use the live API:
-    // 1. Get a free API key from https://newsapi.org/
-    // 2. Create a .env file in the root of your project
-    // 3. Add the following line to the .env file:
-    //    VITE_NEWSAPI_KEY=your_api_key_here
-    // 4. Restart your development server
-    this.apiKey = import.meta.env.VITE_NEWSAPI_KEY || '';
-
-    // Cache for API responses (30 minutes)
+    this.baseURL = 'https://back-end-pro.vercel.app/news/all-news';
     this.cache = new Map();
-    this.cacheDuration = 30 * 60 * 1000; // 30 minutes in milliseconds
+    this.cacheDuration = 30 * 60 * 1000;
+
+    this.travelKeywords = [
+      'visa', 'travel', 'passport', 'tourism', 'tourist', 'airport', 'flight',
+      'immigration', 'embassy', 'consulate', 'schengen', 'residency', 'permit',
+      'border', 'customs', 'airline', 'hotel', 'destination', 'journey', 'trip',
+      'abroad', 'overseas', 'migration', 'migrant', 'nomad', 'e-visa', 'visa-free',
+      'visa on arrival', 'entry requirements', 'travel documents', 'travel insurance',
+      'مطار', 'طيران', 'سفر', 'تأشيرة', 'سياحة', 'سياحي', 'جواز', 'هجرة', 'سفارة',
+      'قنصلية', 'حدود', 'جمارك', 'فندق', 'وجهة', 'رحلة', 'خارج', 'مهاجر', 'نوماد',
+      'رحلات', 'سفريات', 'تأشيرات', 'جوازات', 'مطارات', 'خطوط', 'تأشيره'
+    ];
+
+    this.countryAliases = {
+      'Croatia': ['Croatia', 'Croatian', 'Zagreb', 'Split', 'Dubrovnik', 'Hrvatska', 'كرواتيا'],
+      'Czech Republic': ['Czech Republic', 'Czech', 'Czechia', 'Prague', 'Brno', 'التشيك', 'براغ'],
+      'Estonia': ['Estonia', 'Estonian', 'Tallinn', 'Tartu', 'إستونيا', 'تالين'],
+      'Germany': ['Germany', 'German', 'Deutschland', 'Berlin', 'Munich', 'Hamburg', 'Frankfurt', 'ألمانيا', 'برلين'],
+      'Greece': ['Greece', 'Greek', 'Hellenic', 'Athens', 'Thessaloniki', 'Santorini', 'اليونان', 'أثينا'],
+      'Italy': ['Italy', 'Italian', 'Italia', 'Rome', 'Milan', 'Venice', 'Naples', 'إيطاليا', 'روما', 'ميلانو'],
+      'Malta': ['Malta', 'Maltese', 'Valletta', 'مالطا', 'فاليتا'],
+      'Mexico': ['Mexico', 'Mexican', 'Mexico City', 'Cancun', 'Guadalajara', 'المكسيك', 'كانكون'],
+      'Portugal': ['Portugal', 'Portuguese', 'Lisbon', 'Porto', 'Madeira', 'Algarve', 'برتغال', 'لشبونة'],
+      'Spain': ['Spain', 'Spanish', 'España', 'Madrid', 'Barcelona', 'Valencia', 'Seville', 'إسبانيا', 'مدريد', 'برشلونة'],
+      'Thailand': ['Thailand', 'Thai', 'Bangkok', 'Chiang Mai', 'Phuket', 'Pattaya', 'Krabi', 'تايلاند', 'بانكوك', 'فوكيت'],
+      'United Arab Emirates': ['UAE', 'United Arab Emirates', 'Emirates', 'Dubai', 'Abu Dhabi', 'Sharjah', 'الإمارات', 'دبي', 'أبوظبي']
+    };
+
+    this.supportedCountries = Object.keys(this.countryAliases);
   }
 
-  /**
-   * Get cached data or null if expired/not found
-   */
   getCached(key) {
     const cached = this.cache.get(key);
     if (!cached) return null;
-
-    const isExpired = Date.now() - cached.timestamp > this.cacheDuration;
-    if (isExpired) {
+    if (Date.now() - cached.timestamp > this.cacheDuration) {
       this.cache.delete(key);
       return null;
     }
-
     return cached.data;
   }
 
-  /**
-   * Set cache data
-   */
   setCached(key, data) {
-    this.cache.set(key, {
-      data,
-      timestamp: Date.now()
-    });
+    this.cache.set(key, { data, timestamp: Date.now() });
   }
 
-  /**
-   * Fetch visa requirements and travel document news for a specific country
-   * @param {string} country - Country name (e.g., 'Portugal', 'Spain')
-   * @returns {Promise<Array>} Array of news articles
-   */
-  async getCountryNews(country) {
-    const cacheKey = `news_${country}`;
-    const cached = this.getCached(cacheKey);
-
-    if (cached) {
-      return cached;
-    }
-
-    if (!this.apiKey) {
-      console.warn('VITE_NEWSAPI_KEY not configured. Using mock data.');
-      return this.getMockNews(country);
-    }
-
-    try {
-      // ← كويري جديد: فيزا وأوراق سفر ومتطلبات دخول
-      const query = `"${country}" AND ("visa requirements" OR "travel documents" OR "visa application" OR "entry requirements" OR "embassy visa" OR "consular services" OR "passport requirements" OR "visa fees" OR "travel advisory")`;
-
-      const response = await axios.get(`${this.baseURL}/everything`, {
-        params: {
-          q: query,
-          language: 'en',
-          sortBy: 'publishedAt',
-          pageSize: 5,
-          apiKey: this.apiKey
-        }
-      });
-
-      const articles = this.parseArticles(response.data.articles, country);
-      this.setCached(cacheKey, articles);
-
-      return articles;
-    } catch (error) {
-      console.error('Error fetching news:', error.message);
-      return this.getMockNews(country);
-    }
+  clearCache() {
+    this.cache.clear();
   }
 
-  /**
-   * Fetch general visa and travel document news
-   * @returns {Promise<Array>} Array of news articles
-   */
-  async getGeneralNews() {
-    const cacheKey = 'news_general';
-    const cached = this.getCached(cacheKey);
-
-    if (cached) {
-      return cached;
-    }
-
-    if (!this.apiKey) {
-      console.warn('VITE_NEWSAPI_KEY not configured. Using mock data.');
-      return this.getMockGeneralNews();
-    }
-
-    try {
-      // ← كويري جديد: أخبار عامة عن الفيزا والأوراق
-      const query = '"visa requirements" OR "travel documents" OR "visa application guide" OR "entry requirements" OR "embassy updates" OR "consular news" OR "passport requirements" OR "travel advisory" OR "visa policy changes"';
-
-      const response = await axios.get(`${this.baseURL}/everything`, {
-        params: {
-          q: query,
-          language: 'en',
-          sortBy: 'publishedAt',
-          pageSize: 20,
-          apiKey: this.apiKey
-        }
-      });
-
-      const articles = this.parseArticles(response.data.articles, 'general');
-      this.setCached(cacheKey, articles);
-
-      return articles;
-    } catch (error) {
-      console.error('Error fetching general news:', error.message);
-      return this.getMockGeneralNews();
-    }
+  isTravelRelated(article) {
+    const text = `${article.title || ''} ${article.description || ''} ${article.content || ''}`.toLowerCase();
+    return this.travelKeywords.some(keyword => text.includes(keyword.toLowerCase()));
   }
 
-  /**
-   * Parse and format articles
-   */
-  parseArticles(articles, country) {
-    return articles
+  isRelatedToCountry(article, country) {
+    const text = `${article.title || ''} ${article.description || ''} ${article.content || ''}`.toLowerCase();
+    const aliases = this.countryAliases[country] || [country];
+    return aliases.some(alias => text.includes(alias.toLowerCase()));
+  }
+
+  parseArticles(rawArticles) {
+    if (!Array.isArray(rawArticles)) {
+      rawArticles = rawArticles?.articles || rawArticles?.data || [];
+    }
+
+    return rawArticles
       .filter(article => article.title && article.description)
+      .filter(article => this.isTravelRelated(article))
       .map(article => ({
         title: article.title,
         description: article.description,
         url: article.url,
-        source: article.source?.name || 'Unknown',
+        source: article.source?.name || article.source || 'Unknown',
         publishedAt: article.publishedAt,
-        imageUrl: article.urlToImage,
-        country: country,
-        date: new Date(article.publishedAt).toLocaleDateString('en-US', {
+        imageUrl: article.imageUrl || article.urlToImage || null,
+        country: article.country || null,
+        date: article.date || new Date(article.publishedAt).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'short',
           day: 'numeric'
@@ -152,151 +88,320 @@ class NewsService {
       }));
   }
 
-  /**
-   * Get trending visa topics from multiple countries
-   * @param {Array<string>} countries - Array of country names
-   * @returns {Promise<Array>} Combined news from all countries
-   */
-  async getBatchNews(countries) {
-    const promises = countries.map(country => this.getCountryNews(country));
+  async getGeneralNews() {
+    const cacheKey = 'news_general';
+    const cached = this.getCached(cacheKey);
+    if (cached) return cached;
 
     try {
-      const results = await Promise.all(promises);
-      // Flatten and sort by date
-      return results
-        .flat()
-        .sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+      const response = await axios.get(this.baseURL);
+      let articles = this.parseArticles(response.data);
+
+      articles = articles.map(article => {
+        const matchedCountry = this.supportedCountries.find(c => 
+          this.isRelatedToCountry(article, c)
+        );
+        return {
+          ...article,
+          country: matchedCountry || 'general'
+        };
+      });
+
+      this.setCached(cacheKey, articles);
+      return articles;
     } catch (error) {
-      console.error('Error in batch news fetch:', error.message);
+      console.error('Error fetching general news:', error.message);
       return this.getMockGeneralNews();
     }
   }
 
-  /**
-   * Mock data for development/fallback
-   */
+  async getCountryNews(country) {
+    const cacheKey = `news_${country}`;
+    const cached = this.getCached(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const response = await axios.get(this.baseURL, {
+        params: { country }
+      });
+
+      let articles = this.parseArticles(response.data);
+
+      const textMatched = articles.filter(article => 
+        this.isRelatedToCountry(article, country)
+      );
+
+      if (textMatched.length > 0) {
+        articles = textMatched.map(article => ({
+          ...article,
+          country: country
+        }));
+        this.setCached(cacheKey, articles);
+        return articles;
+      }
+
+      if (articles.length > 0) {
+        articles = articles.map(article => ({
+          ...article,
+          country: country
+        }));
+        this.setCached(cacheKey, articles);
+        return articles;
+      }
+
+      console.log(`No news found for ${country}, using mock data`);
+      return this.getMockNews(country);
+    } catch (error) {
+      console.error('Error fetching country news:', error.message);
+      return this.getMockNews(country);
+    }
+  }
+
   getMockNews(country) {
     const mockData = {
       'Portugal': [
         {
-          title: `${country} Updates Visa Requirements for Non-EU Travelers`,
-          description: 'Portuguese embassy announces new document checklist including proof of accommodation, travel insurance, and financial means for tourist visa applications.',
-          url: `https://news.google.com/search?q=${encodeURIComponent(country + ' visa requirements')}`,
-          source: 'SchengenVisaInfo',
+          title: 'Portugal D8 Digital Nomad Visa: New Requirements for 2025',
+          description: 'Portuguese authorities announce updated income thresholds and new documentation requirements for digital nomad visa applicants.',
+          url: 'https://news.google.com/search?q=Portugal+D8+Visa+2025',
+          source: 'Portugal News',
           publishedAt: new Date().toISOString(),
-          imageUrl: null,
-          country: country,
-          date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+          country: 'Portugal',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
         },
         {
-          title: `New Online Visa Application System Launched in ${country}`,
-          description: 'Portugal introduces digital visa portal allowing applicants to submit documents online and track application status in real-time.',
-          url: `https://news.google.com/search?q=${encodeURIComponent(country + ' visa application online')}`,
-          source: 'Portugal News',
+          title: 'Lisbon Sees Surge in Remote Worker Applications',
+          description: 'Portuguese capital becomes top destination for digital nomads seeking EU residency through the D8 visa program.',
+          url: 'https://news.google.com/search?q=Lisbon+Digital+Nomads',
+          source: 'EU Travel Today',
           publishedAt: new Date(Date.now() - 86400000).toISOString(),
-          imageUrl: null,
-          country: country,
-          date: new Date(Date.now() - 86400000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+          country: 'Portugal',
+          date: new Date(Date.now() - 86400000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Spain': [
+        {
+          title: 'Spain Digital Nomad Visa: 15% Tax Reduction Confirmed',
+          description: 'Spanish government confirms income tax reduction for digital nomad visa holders for the first four years.',
+          url: 'https://news.google.com/search?q=Spain+Digital+Nomad+Tax',
+          source: 'Spain Travel Update',
+          publishedAt: new Date().toISOString(),
+          country: 'Spain',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        },
+        {
+          title: 'Barcelona Opens Coworking Visa Support Center',
+          description: 'City hall opens dedicated office to help digital nomads navigate the Spanish visa application process.',
+          url: 'https://news.google.com/search?q=Barcelona+Digital+Nomad',
+          source: 'Barcelona Metropolitan',
+          publishedAt: new Date(Date.now() - 172800000).toISOString(),
+          country: 'Spain',
+          date: new Date(Date.now() - 172800000).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Germany': [
+        {
+          title: 'Germany Freelance Visa: New Online Portal Launch',
+          description: 'German immigration launches digital platform for freelance visa applications reducing processing times significantly.',
+          url: 'https://news.google.com/search?q=Germany+Freelance+Visa+Online',
+          source: 'Berlin.de',
+          publishedAt: new Date().toISOString(),
+          country: 'Germany',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Greece': [
+        {
+          title: 'Greece Digital Nomad Visa: 50% Tax Reduction',
+          description: 'Athens confirms significant tax incentives for remote workers holding the Greek digital nomad visa.',
+          url: 'https://news.google.com/search?q=Greece+Digital+Nomad+Tax',
+          source: 'Greek Travel News',
+          publishedAt: new Date().toISOString(),
+          country: 'Greece',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Italy': [
+        {
+          title: 'Italy Digital Nomad Visa: Income Requirements Lowered',
+          description: 'Italian government reduces minimum monthly income requirement to €2,300 for digital nomad visa applicants.',
+          url: 'https://news.google.com/search?q=Italy+Digital+Nomad+Income',
+          source: 'Italy Travel Update',
+          publishedAt: new Date().toISOString(),
+          country: 'Italy',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Malta': [
+        {
+          title: 'Malta Nomad Residence Permit Renewals Hit Record',
+          description: 'Island nation sees unprecedented number of remote workers choosing to extend their stay through the nomad permit program.',
+          url: 'https://news.google.com/search?q=Malta+Nomad+Permit',
+          source: 'Malta Independent',
+          publishedAt: new Date().toISOString(),
+          country: 'Malta',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Croatia': [
+        {
+          title: 'Croatia Digital Nomad Visa: Schengen Access Benefits',
+          description: 'Remote workers highlight Schengen zone travel freedom as key benefit of Croatian digital nomad residence permit.',
+          url: 'https://news.google.com/search?q=Croatia+Digital+Nomad+Schengen',
+          source: 'Croatia Week',
+          publishedAt: new Date().toISOString(),
+          country: 'Croatia',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Estonia': [
+        {
+          title: 'Estonia Digital Nomad Visa Processing in 15 Days',
+          description: 'Baltic nation maintains fastest digital nomad visa processing times in Europe at just two weeks.',
+          url: 'https://news.google.com/search?q=Estonia+Digital+Nomad+Fast',
+          source: 'Estonian World',
+          publishedAt: new Date().toISOString(),
+          country: 'Estonia',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Czech Republic': [
+        {
+          title: 'Czech Republic Updates Long-Term Business Visa Rules',
+          description: 'Prague announces streamlined documentation requirements for long-term business visa applicants.',
+          url: 'https://news.google.com/search?q=Czech+Business+Visa+2025',
+          source: 'Prague Morning',
+          publishedAt: new Date().toISOString(),
+          country: 'Czech Republic',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Mexico': [
+        {
+          title: 'Mexico Temporary Resident Visa: Income Threshold Update',
+          description: 'Mexican authorities adjust minimum income requirements for temporary resident visa applications.',
+          url: 'https://news.google.com/search?q=Mexico+Temporary+Resident+Visa',
+          source: 'Mexico News Daily',
+          publishedAt: new Date().toISOString(),
+          country: 'Mexico',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'Thailand': [
+        {
+          title: 'Thailand SMART Visa: Tech Industry Expansion',
+          description: 'Bangkok expands SMART visa program to include additional tech and digital industry categories.',
+          url: 'https://news.google.com/search?q=Thailand+SMART+Visa+Tech',
+          source: 'Bangkok Post',
+          publishedAt: new Date().toISOString(),
+          country: 'Thailand',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
+        }
+      ],
+      'United Arab Emirates': [
+        {
+          title: 'Dubai Virtual Working Program: Tax-Free Income Benefits',
+          description: 'Remote workers praise Dubai virtual working permit for tax-free income and world-class infrastructure.',
+          url: 'https://news.google.com/search?q=Dubai+Virtual+Working+Tax',
+          source: 'Gulf News',
+          publishedAt: new Date().toISOString(),
+          country: 'United Arab Emirates',
+          date: new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })
         }
       ]
     };
 
-    return mockData[country] || this.getMockGeneralNews().slice(0, 2);
+    const rawArticles = mockData[country] || [];
+    return this.parseArticles(rawArticles);
   }
 
-  /**
-   * Mock general news
-   */
   getMockGeneralNews() {
-    return [
+    const rawArticles = [
       {
         title: 'Schengen Area Updates Entry Requirements for 2025',
         description: 'New travel document rules and extended visa processing times announced for Schengen visa applicants worldwide.',
         url: 'https://news.google.com/search?q=Schengen+Visa+Requirements+2025',
         source: 'Travel Visa News',
         publishedAt: new Date().toISOString(),
-        imageUrl: null,
         country: 'general',
-        date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        date: new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })
       },
       {
-        title: 'UK Embassy Announces New Document Verification Process',
-        description: 'British consular services introduce additional security checks for visa applications requiring updated passport and bank statement formats.',
-        url: 'https://news.google.com/search?q=UK+Visa+Documents+2025',
-        source: 'UK Visa Guide',
+        title: 'Top 10 Digital Nomad Destinations for 2025',
+        description: 'Annual ranking reveals best countries for remote workers based on visa policies, cost of living, and internet speed.',
+        url: 'https://news.google.com/search?q=Digital+Nomad+Destinations+2025',
+        source: 'Nomad Guide',
         publishedAt: new Date(Date.now() - 86400000).toISOString(),
-        imageUrl: null,
         country: 'general',
-        date: new Date(Date.now() - 86400000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-      },
-      {
-        title: 'Dubai Streamlines Tourist Visa Application Process',
-        description: 'UAE reduces required documents and introduces express 48-hour visa processing for eligible travelers.',
-        url: 'https://news.google.com/search?q=Dubai+Tourist+Visa+Application',
-        source: 'Gulf Travel News',
-        publishedAt: new Date(Date.now() - 172800000).toISOString(),
-        imageUrl: null,
-        country: 'United Arab Emirates',
-        date: new Date(Date.now() - 172800000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-      },
-      {
-        title: 'Spain Updates Financial Requirements for Visa Applicants',
-        description: 'New minimum bank balance requirements and updated proof of income documents needed for Spanish tourist and student visas.',
-        url: 'https://news.google.com/search?q=Spain+Visa+Financial+Requirements',
-        source: 'Spain Travel Update',
-        publishedAt: new Date(Date.now() - 259200000).toISOString(),
-        imageUrl: null,
-        country: 'Spain',
-        date: new Date(Date.now() - 259200000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-      },
-      {
-        title: 'Japan Expands Visa-Free Entry for Select Nationalities',
-        description: 'Japanese immigration announces extended visa-free stays and simplified entry procedures for tourists from 10 additional countries.',
-        url: 'https://news.google.com/search?q=Japan+Visa+Free+Entry+2025',
-        source: 'Asia Travel News',
-        publishedAt: new Date(Date.now() - 345600000).toISOString(),
-        imageUrl: null,
-        country: 'Japan',
-        date: new Date(Date.now() - 345600000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-      },
-      {
-        title: 'Germany Introduces Digital Visa Appointment System',
-        description: 'New online booking platform for embassy visa appointments reduces wait times and allows document pre-upload.',
-        url: 'https://news.google.com/search?q=Germany+Visa+Appointment+System',
-        source: 'EU Travel Today',
-        publishedAt: new Date(Date.now() - 432000000).toISOString(),
-        imageUrl: null,
-        country: 'Germany',
-        date: new Date(Date.now() - 432000000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-      },
-      {
-        title: 'Australia Updates Health Insurance Requirements for Visitors',
-        description: 'New mandatory travel insurance coverage amounts and approved provider list released for Australian visa applicants.',
-        url: 'https://news.google.com/search?q=Australia+Visa+Insurance+Requirements',
-        source: 'Pacific Travel News',
-        publishedAt: new Date(Date.now() - 518400000).toISOString(),
-        imageUrl: null,
-        country: 'Australia',
-        date: new Date(Date.now() - 518400000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-      },
-      {
-        title: 'Thailand Extends Visa on Arrival for 30 More Days',
-        description: 'Tourist visa exemption period extended allowing travelers to stay up to 60 days with simplified border crossing documents.',
-        url: 'https://news.google.com/search?q=Thailand+Visa+On+Arrival+2025',
-        source: 'Southeast Asia Travel',
-        publishedAt: new Date(Date.now() - 604800000).toISOString(),
-        imageUrl: null,
-        country: 'Thailand',
-        date: new Date(Date.now() - 604800000).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+        date: new Date(Date.now() - 86400000).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })
       }
     ];
-  }
 
-  /**
-   * Clear the cache
-   */
-  clearCache() {
-    this.cache.clear();
+    return this.parseArticles(rawArticles);
   }
 }
 
