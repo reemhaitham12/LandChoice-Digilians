@@ -5,34 +5,6 @@ class NewsService {
     this.baseURL = 'https://back-end-pro.vercel.app/news/all-news';
     this.cache = new Map();
     this.cacheDuration = 30 * 60 * 1000;
-
-    this.travelKeywords = [
-      'visa', 'travel', 'passport', 'tourism', 'tourist', 'airport', 'flight',
-      'immigration', 'embassy', 'consulate', 'schengen', 'residency', 'permit',
-      'border', 'customs', 'airline', 'hotel', 'destination', 'journey', 'trip',
-      'abroad', 'overseas', 'migration', 'migrant', 'nomad', 'e-visa', 'visa-free',
-      'visa on arrival', 'entry requirements', 'travel documents', 'travel insurance',
-      'مطار', 'طيران', 'سفر', 'تأشيرة', 'سياحة', 'سياحي', 'جواز', 'هجرة', 'سفارة',
-      'قنصلية', 'حدود', 'جمارك', 'فندق', 'وجهة', 'رحلة', 'خارج', 'مهاجر', 'نوماد',
-      'رحلات', 'سفريات', 'تأشيرات', 'جوازات', 'مطارات', 'خطوط', 'تأشيره'
-    ];
-
-    this.countryAliases = {
-      'Croatia': ['Croatia', 'Croatian', 'Zagreb', 'Split', 'Dubrovnik', 'Hrvatska', 'كرواتيا'],
-      'Czech Republic': ['Czech Republic', 'Czech', 'Czechia', 'Prague', 'Brno', 'التشيك', 'براغ'],
-      'Estonia': ['Estonia', 'Estonian', 'Tallinn', 'Tartu', 'إستونيا', 'تالين'],
-      'Germany': ['Germany', 'German', 'Deutschland', 'Berlin', 'Munich', 'Hamburg', 'Frankfurt', 'ألمانيا', 'برلين'],
-      'Greece': ['Greece', 'Greek', 'Hellenic', 'Athens', 'Thessaloniki', 'Santorini', 'اليونان', 'أثينا'],
-      'Italy': ['Italy', 'Italian', 'Italia', 'Rome', 'Milan', 'Venice', 'Naples', 'إيطاليا', 'روما', 'ميلانو'],
-      'Malta': ['Malta', 'Maltese', 'Valletta', 'مالطا', 'فاليتا'],
-      'Mexico': ['Mexico', 'Mexican', 'Mexico City', 'Cancun', 'Guadalajara', 'المكسيك', 'كانكون'],
-      'Portugal': ['Portugal', 'Portuguese', 'Lisbon', 'Porto', 'Madeira', 'Algarve', 'برتغال', 'لشبونة'],
-      'Spain': ['Spain', 'Spanish', 'España', 'Madrid', 'Barcelona', 'Valencia', 'Seville', 'إسبانيا', 'مدريد', 'برشلونة'],
-      'Thailand': ['Thailand', 'Thai', 'Bangkok', 'Chiang Mai', 'Phuket', 'Pattaya', 'Krabi', 'تايلاند', 'بانكوك', 'فوكيت'],
-      'United Arab Emirates': ['UAE', 'United Arab Emirates', 'Emirates', 'Dubai', 'Abu Dhabi', 'Sharjah', 'الإمارات', 'دبي', 'أبوظبي']
-    };
-
-    this.supportedCountries = Object.keys(this.countryAliases);
   }
 
   getCached(key) {
@@ -53,17 +25,6 @@ class NewsService {
     this.cache.clear();
   }
 
-  isTravelRelated(article) {
-    const text = `${article.title || ''} ${article.description || ''} ${article.content || ''}`.toLowerCase();
-    return this.travelKeywords.some(keyword => text.includes(keyword.toLowerCase()));
-  }
-
-  isRelatedToCountry(article, country) {
-    const text = `${article.title || ''} ${article.description || ''} ${article.content || ''}`.toLowerCase();
-    const aliases = this.countryAliases[country] || [country];
-    return aliases.some(alias => text.includes(alias.toLowerCase()));
-  }
-
   parseArticles(rawArticles) {
     if (!Array.isArray(rawArticles)) {
       rawArticles = rawArticles?.articles || rawArticles?.data || [];
@@ -71,7 +32,6 @@ class NewsService {
 
     return rawArticles
       .filter(article => article.title && article.description)
-      .filter(article => this.isTravelRelated(article))
       .map(article => ({
         title: article.title,
         description: article.description,
@@ -97,15 +57,10 @@ class NewsService {
       const response = await axios.get(this.baseURL);
       let articles = this.parseArticles(response.data);
 
-      articles = articles.map(article => {
-        const matchedCountry = this.supportedCountries.find(c => 
-          this.isRelatedToCountry(article, c)
-        );
-        return {
-          ...article,
-          country: matchedCountry || 'general'
-        };
-      });
+      articles = articles.map(article => ({
+        ...article,
+        country: article.country || 'general'
+      }));
 
       this.setCached(cacheKey, articles);
       return articles;
@@ -127,23 +82,10 @@ class NewsService {
 
       let articles = this.parseArticles(response.data);
 
-      const textMatched = articles.filter(article => 
-        this.isRelatedToCountry(article, country)
-      );
-
-      if (textMatched.length > 0) {
-        articles = textMatched.map(article => ({
-          ...article,
-          country: country
-        }));
-        this.setCached(cacheKey, articles);
-        return articles;
-      }
-
       if (articles.length > 0) {
         articles = articles.map(article => ({
           ...article,
-          country: country
+          country: article.country || country
         }));
         this.setCached(cacheKey, articles);
         return articles;
