@@ -16,12 +16,13 @@ import {
   faBars,
   faXmark,
   faInfoCircle,
+  faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
-
+  const isAdmin = user?.role === "Admin";
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -58,10 +59,9 @@ export default function Navbar() {
   ];
 
   const linkClass = (isActive) =>
-    `flex items-center gap-2 px-3 lg:px-4 py-2 rounded-full text-sm transition-all duration-300 ${
-      isActive
-        ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
-        : "text-slate-400 hover:text-white hover:bg-white/5"
+    `flex items-center gap-2 px-3 lg:px-4 py-2 rounded-full text-sm transition-all duration-300 ${isActive
+      ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+      : "text-slate-400 hover:text-white hover:bg-white/5"
     }`;
 
   return (
@@ -101,10 +101,13 @@ export default function Navbar() {
           {user ? (
             <>
               <button
-                onClick={() => navigate("/dashboard")}
-                className="w-11 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center"
+                onClick={() =>
+                  navigate(isAdmin ? "/admin-dashboard" : "/dashboard")
+                }
               >
-                <FontAwesomeIcon icon={faUser} />
+                <FontAwesomeIcon
+                  icon={isAdmin ? faUserShield : faUser}
+                />
               </button>
 
               <button
@@ -144,11 +147,10 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`xl:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-          isOpen
-            ? "max-h-screen opacity-100 translate-y-0 mt-4"
-            : "max-h-0 opacity-0 -translate-y-4"
-        }`}
+        className={`xl:hidden overflow-hidden transition-all duration-500 ease-in-out ${isOpen
+          ? "max-h-screen opacity-100 translate-y-0 mt-4"
+          : "max-h-0 opacity-0 -translate-y-4"
+          }`}
       >
         <div className="bg-[#0f172a]/95 border border-white/10 rounded-3xl p-4 shadow-2xl">
           <div className="flex flex-col gap-2">
