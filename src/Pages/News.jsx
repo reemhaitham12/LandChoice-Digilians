@@ -50,7 +50,7 @@ const News = () => {
 
   if (visaLoading) {
     return (
-      <div className="w-full max-w-7xl mx-auto p-6 md:p-12 mb-10">
+      <div className="w-full max-w-7xl mx-auto p-6 md:p-12 mb-10 pt-24 md:pt-32">
         <div className="flex flex-col items-center justify-center py-20">
           <FontAwesomeIcon icon={faSpinner} className="w-12 h-12 text-primary fa-spin mb-4" />
           <p className="text-slate-400">Loading countries data...</p>
@@ -60,7 +60,8 @@ const News = () => {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-6 md:p-12 mb-10">
+    // ✅ زودنا pt-24 md:pt-32 هنا عشان نبعد المحتوى عن الـ Navbar
+    <div className="w-full max-w-7xl mx-auto md:p-12 pt-24 md:pt-32 mb-10">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -96,8 +97,8 @@ const News = () => {
     <option 
       key={country.id} 
       value={country.id}
-      className="bg-[#0a0f1e] text-white"  // ← ثابت الخلفية والنص
-      style={{ backgroundColor: '#0a0f1e', color: 'white' }}  // ← fallback
+      className="bg-[#0a0f1e] text-white"
+      style={{ backgroundColor: '#0a0f1e', color: 'white' }}
     >
       {country.name}
     </option>
