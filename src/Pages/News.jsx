@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRss, faExternalLinkAlt, faCalendarAlt, faFilter, faSyncAlt, faSpinner, faGlobe, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import newsService from '../services/newsService';
 import { useVisa } from '../context/visaContext'; 
+import Loading from "../Components/Loading";
 
 const News = () => {
   const { visaData, loading: visaLoading } = useVisa(); 
@@ -55,16 +56,8 @@ const News = () => {
   };
 
   if (visaLoading) {
-    return (
-      <div className="w-full max-w-7xl mx-auto p-6 md:p-12 mb-10 pt-24 md:pt-32">
-        <div className="flex flex-col items-center justify-center py-20">
-          <FontAwesomeIcon icon={faSpinner} className="w-12 h-12 text-primary fa-spin mb-4" />
-          <p className="text-slate-400">Loading countries data...</p>
-        </div>
-      </div>
-    );
-  }
-
+  return <Loading />;
+}
   return (
     <div className="w-full max-w-7xl mx-auto md:p-12 pt-24 md:pt-32 mb-10">
       {/* Header */}
@@ -129,12 +122,7 @@ const News = () => {
       </motion.div>
 
       {/* Loading State */}
-      {loading && (
-        <div className="flex flex-col items-center justify-center py-20">
-          <FontAwesomeIcon icon={faSpinner} className="w-12 h-12 text-primary fa-spin mb-4" />
-          <p className="text-slate-400">Loading latest news...</p>
-        </div>
-      )}
+      {loading && <Loading />}
 
       {/* Articles Grid */}
       {!loading && articles.length > 0 && (
