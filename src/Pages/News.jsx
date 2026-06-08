@@ -7,12 +7,13 @@ import { useVisa } from '../context/visaContext';
 
 const News = () => {
   const { visaData, loading: visaLoading } = useVisa(); 
-  
+
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCountry, setSelectedCountry] = useState('all');
   const [refreshing, setRefreshing] = useState(false);
 
+  const PLACEHOLDER_IMAGE = 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&h=200&fit=crop';
 
   const countries = [
     { id: 'all', name: 'All Countries' },
@@ -47,6 +48,11 @@ const News = () => {
     fetchNews();
   };
 
+  
+  const handleImageError = (e) => {
+    e.target.onerror = null; 
+    e.target.src = PLACEHOLDER_IMAGE;
+  };
 
   if (visaLoading) {
     return (
@@ -60,7 +66,6 @@ const News = () => {
   }
 
   return (
-    // ✅ زودنا pt-24 md:pt-32 هنا عشان نبعد المحتوى عن الـ Navbar
     <div className="w-full max-w-7xl mx-auto md:p-12 pt-24 md:pt-32 mb-10">
       {/* Header */}
       <motion.div
@@ -88,22 +93,22 @@ const News = () => {
       >
         <div className="flex items-center gap-3 flex-grow w-full md:w-auto">
           <FontAwesomeIcon icon={faFilter} className="w-5 h-5 text-primary" />
-         <select
-  value={selectedCountry}
-  onChange={(e) => setSelectedCountry(e.target.value)}
-  className="bg-[#0a0f1e] border border-gray-700 text-white rounded-xl px-4 py-2.5 flex-grow md:w-64 focus:outline-none focus:border-blue-500 text-sm font-medium"
->
-  {countries.map(country => (
-    <option 
-      key={country.id} 
-      value={country.id}
-      className="bg-[#0a0f1e] text-white"
-      style={{ backgroundColor: '#0a0f1e', color: 'white' }}
-    >
-      {country.name}
-    </option>
-  ))}
-</select>
+          <select
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
+            className="bg-[#0a0f1e] border border-gray-700 text-white rounded-xl px-4 py-2.5 flex-grow md:w-64 focus:outline-none focus:border-blue-500 text-sm font-medium"
+          >
+            {countries.map(country => (
+              <option 
+                key={country.id} 
+                value={country.id}
+                className="bg-[#0a0f1e] text-white"
+                style={{ backgroundColor: '#0a0f1e', color: 'white' }}
+              >
+                {country.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="flex items-center gap-4 w-full md:w-auto">
@@ -152,19 +157,15 @@ const News = () => {
                 transition={{ delay: idx * 0.05 }}
                 className="glass-card flex flex-col justify-between rounded-3xl group cursor-pointer hover:border-primary/30 transition-all overflow-hidden"
               >
-                {/* Image */}
-                {article.imageUrl && (
-                  <div className="w-full h-48 overflow-hidden bg-dark-900">
-                    <img
-                      src={article.imageUrl}
-                      alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
+                {/* Image with fallback */}
+                <div className="w-full h-48 overflow-hidden bg-dark-900">
+                  <img
+                    src={article.imageUrl || PLACEHOLDER_IMAGE}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={handleImageError}
+                  />
+                </div>
 
                 <div className="p-6 md:p-8 flex-grow flex flex-col">
                   {/* Source & Date */}
