@@ -20,7 +20,7 @@ export default function AboutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-white font-sans">
+    <div className="min-h-screen  text-white font-sans">
       {/* Hero Section */}
       <section className="pt-16 pb-12 px-6 text-center pt-32">
         <span className="inline-block px-4 py-1.5 text-xs font-semibold tracking-wider text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full mb-6">
