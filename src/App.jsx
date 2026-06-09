@@ -18,7 +18,7 @@ import VerifyResetCode from "./Pages/VerifyResetCode";
 import ResetPassword from "./Pages/ResetPassword";
 import Dashboard from "./Pages/Dashboard";
 import About from "./Pages/About";
-
+import AdminDashboard from "./Pages/AdminDashboard";
 const HomeRedirect = () => {
   const { user } = useAuth();
   return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
@@ -51,6 +51,14 @@ const routers = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "admin-dashboard",
+        element: (
+          <ProtectedRoute>
+            <AdminDashboard />
           </ProtectedRoute>
         ),
       },
