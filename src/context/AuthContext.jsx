@@ -5,13 +5,16 @@ export const AuthContext = createContext(null);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
+
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
+
   return context;
 };
 
-const API_BASE_URL = "/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -19,6 +22,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
 
 api.interceptors.request.use(
   (config) => {
@@ -33,6 +37,26 @@ api.interceptors.request.use(
   }
 );
 
+const getErrorMessage = (error, fallback = "Something went wrong") => {
+  const err =
+    error.response?.data?.error ||
+    error.response?.data?.message ||
+    error.response?.data ||
+    error.message ||
+    fallback;
+
+  if (typeof err === "string") {
+    return err;
+  }
+
+  if (typeof err === "object" && err !== null) {
+    return err.message || err.code || JSON.stringify(err);
+  }
+
+  return String(err);
+};
+
+
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +64,6 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem("landchoice_user");
     const storedToken = localStorage.getItem("landchoice_token");
-    
     if (storedUser && storedToken) {
       try {
         const parsedUser = JSON.parse(storedUser);
@@ -50,13 +73,16 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem("landchoice_token");
       }
     }
+
     setLoading(false);
   }, []);
 
   const login = async (email, password, rememberMe = false) => {
     try {
       const response = await api.post("/login", { email, password });
+
       const { token, user: userData } = response.data;
+
       
       if (!token) {
         return { success: false, error: "No token received from server" };
@@ -68,62 +94,70 @@ const AuthProvider = ({ children }) => {
         id: userData.id || userData._id,
         token 
       };
-      
+
       setUser(userToStore);
-      
+
       localStorage.setItem("landchoice_user", JSON.stringify(userToStore));
       localStorage.setItem("landchoice_token", token);
-      
       return { success: true, data: userToStore };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.response?.data?.message ||
-        error.message ||
-        "Login failed. Please try again.";
-      return { success: false, error: errorMessage };
+      return {
+        success: false,
+        error: getErrorMessage(error, "Login failed. Please try again."),
+      };
     }
   };
 
   const register = async (name, email, password) => {
     try {
-      const response = await api.post("/register", { name, email, password });
-      return { success: true, message: response.data?.message || "Registered successfully!" };
+      const response = await api.post("/register", {
+        name,
+        email,
+        password,
+      });
+
+      return {
+        success: true,
+        message: response.data?.message || "Registered successfully!",
+      };
+
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.response?.data?.message ||
-        error.message ||
-        "Registration failed. Please try again.";
-      return { success: false, error: errorMessage };
+      return {
+        success: false,
+        error: getErrorMessage(error, "Registration failed. Please try again."),
+      };
     }
   };
 
   const verifyCode = async (email, code) => {
     try {
       const response = await api.post("/verify-code", { email, code });
-      return { success: true, message: response.data?.message || "Email verified!" };
+
+      return {
+        success: true,
+        message: response.data?.message || "Email verified!",
+      };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.response?.data?.message ||
-        error.message ||
-        "Verification failed. Please try again.";
-      return { success: false, error: errorMessage };
+      return {
+        success: false,
+        error: getErrorMessage(error, "Verification failed. Please try again."),
+      };
     }
   };
 
   const resendVerificationCode = async (email) => {
     try {
       const response = await api.post("/resend-verification-code", { email });
-      return { success: true, message: response.data?.message || "Code resent!" };
+
+      return {
+        success: true,
+        message: response.data?.message || "Code resent!",
+      };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to resend code. Please try again.";
-      return { success: false, error: errorMessage };
+      return {
+        success: false,
+        error: getErrorMessage(error, "Failed to resend code. Please try again."),
+      };
     }
   };
 
@@ -136,42 +170,56 @@ const AuthProvider = ({ children }) => {
   const forgotPassword = async (email) => {
     try {
       const response = await api.post("/forgot-password", { email });
-      return { success: true, message: response.data?.message || "Reset code sent to email." };
+
+
+      return {
+        success: true,
+        message: response.data?.message || "Reset code sent to email.",
+      };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to send reset code. Please try again.";
-      return { success: false, error: errorMessage };
+      return {
+        success: false,
+        error: getErrorMessage(error, "Failed to send reset code. Please try again."),
+      };
     }
   };
 
   const verifyResetCode = async (email, resetCode) => {
     try {
-      const response = await api.post("/verify-reset-code", { email, reset_code: resetCode });
-      return { success: true, message: response.data?.message || "Code verified!" };
+      const response = await api.post("/verify-reset-code", {
+        email,
+        reset_code: resetCode,
+      });
+
+      return {
+        success: true,
+        message: response.data?.message || "Code verified!",
+      };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.response?.data?.message ||
-        error.message ||
-        "Invalid or expired code.";
-      return { success: false, error: errorMessage };
+      return {
+        success: false,
+        error: getErrorMessage(error, "Invalid or expired code."),
+      };
     }
   };
 
   const resetPassword = async (email, newPassword) => {
     try {
-      const response = await api.post("/reset-password", { email, new_password: newPassword });
-      return { success: true, message: response.data?.message || "Password reset successfully!" };
+
+      const response = await api.post("/reset-password", {
+        email,
+        new_password: newPassword,
+      });
+
+      return {
+        success: true,
+        message: response.data?.message || "Password reset successfully!",
+      };
     } catch (error) {
-      const errorMessage = 
-        error.response?.data?.error || 
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to reset password. Please try again.";
-      return { success: false, error: errorMessage };
+      return {
+        success: false,
+        error: getErrorMessage(error, "Failed to reset password. Please try again."),
+      };
     }
   };
 

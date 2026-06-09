@@ -1,4 +1,4 @@
-# NomadVisa 🌍
+# LandChoice🌍
 
 A modern web application built with React and Vite to help digital nomads track, compare, and manage their visa requirements worldwide.
 
@@ -71,6 +71,7 @@ This project utilizes a modern technology stack for a fast, responsive, and inte
   ```bash
   npm install tailwind-merge clsx
   ```
+- **[@lottiefiles/dotlottie-react](https://lottiefiles.com/)** – Used for animated travel loading screens and interactive Lottie animations.
 
 ### Icons
 - **[FontAwesome](https://fontawesome.com/)**: Comprehensive icon library used throughout the application.

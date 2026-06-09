@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import * as Yup from "yup";
@@ -16,13 +16,19 @@ const loginSchema = Yup.object().shape({
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [apiError, setApiError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,7 +67,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-[#020618] flex items-start justify-center px-4 pt-28 pb-8 md:items-center md:pt-12">
       <div className="w-full max-w-md">
         <div className="bg-[#111827]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-[0_0_40px_rgba(59,130,246,0.1)] p-8 md:p-10">
           <div className="text-center mb-8">
@@ -131,15 +137,48 @@ const Login = () => {
             </div>
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-600 bg-[#0B1120] text-blue-500 focus:ring-blue-500/50 focus:ring-offset-0"
-                />
-                <span className="text-gray-400 text-sm">Remember me</span>
+              <label className="flex items-center gap-3 cursor-pointer group select-none">
+
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="sr-only"
+                  />
+
+                  <div
+                    className={`w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-300
+        ${rememberMe
+                        ? "bg-blue-500/15 border-[#020618] shadow-[0_0_12px_rgba(59,130,246,0.35)]"
+                        : "bg-[#020618] border-gray-600 group-hover:border-gray-500"
+                      }`}
+                  >
+                    <svg
+                      className={`w-3 h-3 text-blue-300 transition-all duration-200
+          ${rememberMe
+                          ? "opacity-100 scale-100"
+                          : "opacity-0 scale-50"
+                        }`}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                <span className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
+                  Remember me
+                </span>
               </label>
+
               <Link
                 to="/forgot-password"
                 className="text-blue-400 hover:text-blue-300 text-sm transition-colors"
@@ -147,7 +186,6 @@ const Login = () => {
                 Forgot Password?
               </Link>
             </div>
-
             <button
               type="submit"
               disabled={isSubmitting}

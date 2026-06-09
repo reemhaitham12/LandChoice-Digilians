@@ -20,12 +20,19 @@ const Dashboard = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
 
+const Dashboard = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <Loading />;
+  }
+
+
   useEffect(() => {
     if (user) {
       loadPosts();
     }
   }, [user]);
-
   const loadPosts = async () => {
     setIsLoading(true);
     setError("");

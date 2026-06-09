@@ -1,18 +1,13 @@
-
-
-
-
-
 import { createBrowserRouter, RouterProvider, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './Components/Layout';
-import  Home  from './Pages/Home';
-import  Explore  from './Pages/Explore';
-import  SalaryFit  from './Pages/SalaryFit';
-import  ComparyCountry  from './Pages/CompareCountry';
-import  Checklist  from './Pages/CheckList';
-import  News  from './Pages/News';
-import  CountryDetails  from './Pages/CountryDetails';
-import  NotFound  from './Pages/NotFound';
+import Home from './Pages/Home';
+import Explore from './Pages/Explore';
+import SalaryFit from './Pages/SalaryFit';
+import ComparyCountry from './Pages/CompareCountry';
+import Checklist from './Pages/CheckList';
+import News from './Pages/News';
+import CountryDetails from './Pages/CountryDetails';
+import NotFound from './Pages/NotFound';
 import AuthProvider, { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Login from "./Pages/Login";
@@ -22,6 +17,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import VerifyResetCode from "./Pages/VerifyResetCode";
 import ResetPassword from "./Pages/ResetPassword";
 import Dashboard from "./Pages/Dashboard";
+import About from "./Pages/About";
 
 const HomeRedirect = () => {
   const { user } = useAuth();
@@ -40,6 +36,7 @@ const routers = createBrowserRouter([
       { path: 'compare', element: <ComparyCountry /> },
       { path: 'checklist', element: <Checklist /> },
       { path: 'news', element: <News /> },
+      { path: 'about', element: <About /> },
       { path: 'country/:id', element: <CountryDetails /> },
 
       { path: 'login', element: <Login /> },
