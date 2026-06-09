@@ -8,7 +8,7 @@ import Checklist from './Pages/CheckList';
 import News from './Pages/News';
 import CountryDetails from './Pages/CountryDetails';
 import NotFound from './Pages/NotFound';
-import AuthProvider, { useAuth } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
