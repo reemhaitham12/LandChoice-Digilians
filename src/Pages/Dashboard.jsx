@@ -6,6 +6,7 @@ import DeleteConfirmationModal from "../Components/DeleteConfirmationModal";
 import { useState, useRef, useEffect } from "react";
 import { FaPen, FaSpinner, FaTimes } from "react-icons/fa";
 
+
 const Dashboard = () => {
   const { user, fetchAllPosts, createPost, deletePost, likePost, unlikePost, addComment, deleteComment } = useAuth();
   const [posts, setPosts] = useState([]);
