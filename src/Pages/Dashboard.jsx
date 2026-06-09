@@ -1,6 +1,24 @@
 import { useAuth } from "../context/AuthContext";
-import Loading from "../Components/Loading";
-import { FaHome, FaChartLine, FaUsers, FaCog } from "react-icons/fa";
+import Sidebar from "../Components/Sidebar";
+import PostCard from "../Components/PostCard";
+import EmptyState from "../Components/EmptyState";
+import DeleteConfirmationModal from "../Components/DeleteConfirmationModal";
+import { useState, useRef, useEffect } from "react";
+import { FaPen, FaSpinner, FaTimes } from "react-icons/fa";
+
+const Dashboard = () => {
+  const { user, fetchAllPosts, createPost, deletePost, likePost, unlikePost, addComment, deleteComment } = useAuth();
+  const [posts, setPosts] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({ title: "", content: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const titleRef = useRef(null);
+  
+  // Delete modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
@@ -9,68 +27,260 @@ const Dashboard = () => {
     return <Loading />;
   }
 
-  const stats = [
-    { title: "Total Properties", value: "24", icon: FaHome, color: "from-yellow-400 to-orange-500" },
-    { title: "Active Listings", value: "18", icon: FaChartLine, color: "from-blue-400 to-blue-600" },
-    { title: "Total Clients", value: "156", icon: FaUsers, color: "from-green-400 to-green-600" },
-    { title: "Revenue", value: "$12.4K", icon: FaCog, color: "from-purple-400 to-purple-600" },
-  ];
+
+  useEffect(() => {
+    if (user) {
+      loadPosts();
+    }
+  }, [user]);
+  const loadPosts = async () => {
+    setIsLoading(true);
+    setError("");
+    
+    const result = await fetchAllPosts();
+    
+    setIsLoading(false);
+    
+    if (result.success) {
+      const postsData = result.data.posts || [];
+      
+      const myId = user?._id || user?.id;
+      const myEmail = user?.email;
+      
+      const myPosts = postsData.filter(p => {
+        const authorId = p.author?._id || p.author?.id || p.author;
+        const authorEmail = p.author?.email || p.user?.email;
+        
+        if (myId && (authorId === myId || authorId === myId.toString())) return true;
+        if (myEmail && authorEmail === myEmail) return true;
+        
+        return false;
+      });
+      
+      setPosts(myPosts);
+    } else {
+      setError(result.error);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!formData.title.trim() || !formData.content.trim()) return;
+    
+    setIsSubmitting(true);
+    setError("");
+    
+    const result = await createPost(formData.title.trim(), formData.content.trim());
+    setIsSubmitting(false);
+    
+    if (result.success) {
+      await loadPosts();
+      setFormData({ title: "", content: "" });
+      setShowForm(false);
+    } else {
+      setError(result.error);
+    }
+  };
+
+  // Open delete modal
+  const handleDeleteClick = (postId) => {
+    setPostToDelete(postId);
+    setShowDeleteModal(true);
+  };
+
+  // Actual delete after confirmation
+  const handleConfirmDelete = async () => {
+    if (!postToDelete) return;
+    
+    const result = await deletePost(postToDelete);
+    if (result.success) {
+      setPosts(posts.filter((p) => p._id !== postToDelete));
+    } else {
+      setError(result.error);
+    }
+    setPostToDelete(null);
+  };
+
+  const handleLike = async (postId, isLiked) => {
+    const result = isLiked ? await unlikePost(postId) : await likePost(postId);
+    if (result.success) {
+      setPosts(posts.map((p) => {
+        if (p._id !== postId) return p;
+        const newLikesCount = isLiked 
+          ? Math.max(0, (p.likesCount || 1) - 1)
+          : (p.likesCount || 0) + 1;
+        return { ...p, likesCount: newLikesCount };
+      }));
+    }
+  };
+
+  const handleAddComment = async (postId, text) => {
+    const result = await addComment(postId, text);
+    if (result.success) {
+      const newComment = result.data.comment;
+      
+      setPosts(posts.map((p) => {
+        if (p._id !== postId) return p;
+        
+        const updatedComments = [...(p.comments || []), newComment];
+        
+        return {
+          ...p,
+          comments: updatedComments,
+          commentsCount: updatedComments.length
+        };
+      }));
+    } else {
+      setError(result.error);
+    }
+  };
+
+  const handleDeleteComment = async (postId, commentId) => {
+    const result = await deleteComment(postId, commentId);
+    if (result.success) {
+      setPosts(posts.map((p) => {
+        if (p._id !== postId) return p;
+        
+        const updatedComments = (p.comments || []).filter(c => 
+          (c._id || c.id) !== commentId
+        );
+        
+        return {
+          ...p,
+          comments: updatedComments,
+          commentsCount: updatedComments.length
+        };
+      }));
+    } else {
+      setError(result.error);
+    }
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setFormData({ title: "", content: "" });
+    setError("");
+  };
+
+  const displayName = user?.name || user?.email?.split("@")[0] || "User";
 
   return (
-    <div className="min-h-screen pt-28">
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Dashboard
-          </h1>
-          <p className="text-gray-400">
-            Welcome back, {user?.fullName || user?.email || "User"}!
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#071028] to-[#0F172A]">
+      <div className="flex flex-col lg:flex-row gap-8 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
+        <div className="lg:w-[300px] flex-shrink-0">
+          <Sidebar />
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="bg-[#111827]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 p-6 hover:border-gray-700 transition-all duration-300"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${stat.color} flex items-center justify-center`}>
-                  <stat.icon className="text-white text-lg" />
-                </div>
-                <span className="text-2xl font-bold text-white">{stat.value}</span>
-              </div>
-              <p className="text-gray-400 text-sm">{stat.title}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-[#111827]/80 backdrop-blur-xl rounded-2xl border border-gray-800/50 p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">
-            Recent Activity
-          </h2>
-          <div className="space-y-4">
-            {[1, 2, 3, 4, 5].map((item) => (
-              <div
-                key={item}
-                className="flex items-center gap-4 p-4 rounded-xl bg-[#0B1120] border border-gray-800/50"
-              >
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">{item}</span>
-                </div>
-                <div className="flex-1">
-                  <p className="text-white text-sm font-medium">
-                    Activity item {item}
-                  </p>
-                  <p className="text-gray-500 text-xs mt-0.5">
-                    2 hours ago
-                  </p>
-                </div>
-              </div>
-            ))}
+        <main className="flex-1 min-w-0">
+          <div className="mb-8">
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">My Posts</h1>
+            <p className="text-[#94A3B8] text-sm sm:text-base">
+              Welcome back, {displayName}! Manage and publish your stories.
+            </p>
           </div>
-        </div>
-      </main>
+
+          {error && (
+            <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+              {error}
+            </div>
+          )}
+
+          <div className="bg-[#081226] border border-white/[0.08] rounded-[28px] p-6 mb-8 shadow-[0_0_40px_rgba(59,130,246,0.04)]">
+            {!showForm ? (
+              <button
+                onClick={() => { setShowForm(true); setTimeout(() => titleRef.current?.focus(), 100); }}
+                className="w-full text-left"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/10 flex items-center justify-center bg-[#0B1730]">
+                    <span className="text-[#3B82F6] text-lg font-bold">
+                      {(user?.name || user?.email || "U").charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <span className="flex-1 text-[#64748B] text-sm bg-[#0B1730] border border-white/10 rounded-2xl px-4 py-3">
+                    What&apos;s on your mind? Share your experience...
+                  </span>
+                </div>
+              </button>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-white font-semibold text-sm">Create a New Post</h3>
+                  <button onClick={handleCancel} className="text-[#64748B] hover:text-white transition-colors">
+                    <FaTimes size={18} />
+                  </button>
+                </div>
+                <input
+                  ref={titleRef}
+                  type="text"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Post Title"
+                  className="w-full bg-[#0B1730] border border-white/10 rounded-2xl px-4 py-3 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#3B82F6] transition-all duration-300"
+                />
+                <textarea
+                  value={formData.content}
+                  onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                  placeholder="Write your post content here..."
+                  rows={4}
+                  className="w-full bg-[#0B1730] border border-white/10 rounded-2xl px-4 py-3 text-white text-sm placeholder-[#64748B] focus:outline-none focus:border-[#3B82F6] transition-all duration-300 resize-none"
+                />
+                <div className="flex justify-end">
+                  <button
+                    onClick={handlePublish}
+                    disabled={!formData.title.trim() || !formData.content.trim() || isSubmitting}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-[#3B82F6] to-[#60A5FA] text-white text-sm font-medium hover:brightness-110 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <FaSpinner className="animate-spin" size={14} />
+                        Publishing...
+                      </>
+                    ) : (
+                      <>
+                        <FaPen size={14} />
+                        Publish Post
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {isLoading && (
+            <div className="flex items-center justify-center py-12">
+              <FaSpinner className="animate-spin text-[#3B82F6] text-2xl" />
+            </div>
+          )}
+
+          {!isLoading && posts.length === 0 ? (
+            <EmptyState onCreateClick={() => { setShowForm(true); setTimeout(() => titleRef.current?.focus(), 100); }} />
+          ) : (
+            <div className="space-y-6">
+              {posts.map((post) => (
+                <PostCard 
+                  key={post._id} 
+                  post={post} 
+                  currentUser={user}
+                  onDelete={handleDeleteClick}
+                  onLike={handleLike}
+                  onComment={handleAddComment}
+                  onDeleteComment={handleDeleteComment}
+                />
+              ))}
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* Delete Confirmation Modal - Rendered in document.body via Portal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setPostToDelete(null);
+        }}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 };
