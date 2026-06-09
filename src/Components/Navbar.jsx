@@ -1,8 +1,25 @@
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink, Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAuth } from "../context/AuthContext";
-import { FiLogOut } from "react-icons/fi";
 
-const Navbar = () => {
+import {
+  faGlobe,
+  faMap,
+  faCheckSquare,
+  faDollarSign,
+  faProjectDiagram,
+  faSearch,
+  faRss,
+  faRightFromBracket,
+  faUser,
+  faBars,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
+
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -11,48 +28,133 @@ const Navbar = () => {
     navigate("/login");
   };
 
+  const navLinks = [
+    { to: "/", label: "Map", icon: faMap },
+    { to: "/explore", label: "Discover", icon: faSearch },
+    { to: "/salary-fit", label: "Salary Fit", icon: faDollarSign },
+    { to: "/compare", label: "Compare", icon: faProjectDiagram },
+    { to: "/checklist", label: "Checklist", icon: faCheckSquare },
+    { to: "/news", label: "News", icon: faRss },
+  ];
+
+  const linkClass = ({ isActive }) =>
+    `flex items-center gap-2 px-5 py-2 rounded-full transition-all duration-300 ${
+      isActive
+        ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
+        : "text-slate-400 hover:text-white hover:bg-white/5"
+    }`;
+
   return (
-    <nav className="bg-[#111827]/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">L</span>
-            </div>
-            <span className="text-white font-semibold text-lg tracking-wide">
-              LandChoice
-            </span>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-[#111827]/95 via-[#172554]/90 to-[#111827]/95 backdrop-blur-xl border-b border-white/10 px-6 py-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <Link
+          to="/"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-3"
+        >
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#6C8FD9] to-[#f29706] flex items-center justify-center shadow-[0_0_25px_rgba(214,168,95,0.25)]">
+            <FontAwesomeIcon icon={faGlobe} className="text-white text-lg" />
           </div>
 
-          <div className="flex items-center gap-4">
-            {user && (
-              <>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center">
-                    <span className="text-white font-bold text-xs">
-                      {user.fullName?.charAt(0)?.toUpperCase() ||
-                        user.email?.charAt(0)?.toUpperCase() ||
-                        "U"}
-                    </span>
-                  </div>
-                  <span className="text-gray-300 text-sm hidden sm:block">
-                    {user.fullName || user.email || "User"}
+          <h1 className="text-2xl font-bold tracking-tight text-white">
+            Land<span className="text-blue-400">Choice</span>
+          </h1>
+        </Link>
+
+        <div className="hidden md:flex items-center gap-2 bg-[#0f172a]/70 border border-white/10 rounded-full px-2 py-2 shadow-inner">
+          {navLinks.map((link) => (
+            <NavLink key={link.to} to={link.to} className={linkClass}>
+              <FontAwesomeIcon icon={link.icon} />
+              {link.label}
+            </NavLink>
+          ))}
+        </div>
+
+        {user && (
+          <div className="hidden md:flex items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/5 border border-white/10">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center">
+                <span className="text-white font-bold text-sm">
+                  {user.fullName?.charAt(0)?.toUpperCase() ||
+                    user.email?.charAt(0)?.toUpperCase() ||
+                    "U"}
+                </span>
+              </div>
+
+              <span className="text-sm text-white hidden lg:block">
+                {user.fullName || user.email || "User"}
+              </span>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="w-11 h-11 rounded-full bg-red-500/10 border border-red-400/20 text-red-300 hover:bg-red-500/20 transition-all duration-300 flex items-center justify-center"
+            >
+              <FontAwesomeIcon icon={faRightFromBracket} />
+            </button>
+          </div>
+        )}
+
+        <button
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="md:hidden w-11 h-11 rounded-full bg-[#0f172a]/70 border border-white/10 text-slate-300 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center"
+        >
+          <FontAwesomeIcon icon={isOpen ? faXmark : faBars} />
+        </button>
+      </div>
+
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-500 ease-in-out ${
+          isOpen
+            ? "max-h-[520px] opacity-100 translate-y-0 mt-4"
+            : "max-h-0 opacity-0 -translate-y-4"
+        }`}
+      >
+        <div className="bg-[#0f172a]/95 border border-white/10 rounded-3xl p-4 shadow-2xl">
+          <div className="flex flex-col gap-2">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                onClick={() => setIsOpen(false)}
+                className={linkClass}
+              >
+                <FontAwesomeIcon icon={link.icon} />
+                {link.label}
+              </NavLink>
+            ))}
+          </div>
+
+          {user && (
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-400 to-blue-500 flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">
+                    {user.fullName?.charAt(0)?.toUpperCase() ||
+                      user.email?.charAt(0)?.toUpperCase() ||
+                      "U"}
                   </span>
                 </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all duration-300 border border-red-500/20 text-sm font-medium"
-                >
-                  <FiLogOut size={16} />
-                  <span className="hidden sm:inline">Logout</span>
-                </button>
-              </>
-            )}
-          </div>
+
+                <div>
+                  <p className="text-white text-sm font-medium">
+                    {user.fullName || "User"}
+                  </p>
+                  <p className="text-slate-400 text-xs">{user.email}</p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                className="w-full h-11 rounded-full bg-red-500/10 border border-red-400/20 text-red-300 hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
+              >
+                <FontAwesomeIcon icon={faRightFromBracket} />
+                Logout
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
   );
-};
-
-export default Navbar;
+}
