@@ -21,17 +21,17 @@ import Dashboard from "./Pages/Dashboard";
 import About from "./Pages/About";
 import AdminDashboard from "./Pages/AdminDashboard";
 
-const HomeRedirect = () => {
-  const { user } = useAuth();
-  return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
-};
+// const HomeRedirect = () => {
+//   const { user } = useAuth();
+//   return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
+// };
 
 const routers = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
-      { index: true, element: <HomeRedirect /> },
+      { index: true, element: <Home /> },
       { path: 'home', element: <Home /> },
       { path: 'explore', element: <Explore /> },
       { path: 'salary-fit', element: <SalaryFit /> },

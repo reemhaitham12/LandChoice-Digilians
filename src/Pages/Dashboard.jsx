@@ -169,7 +169,7 @@ const Dashboard = () => {
   const displayName = user?.name || user?.email?.split("@")[0] || "User";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#071028] to-[#0F172A]">
+    <div className="min-h-screen pt-20">
       <div className="flex flex-col lg:flex-row gap-8 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         <div className="lg:w-[300px] flex-shrink-0">
           <Sidebar />

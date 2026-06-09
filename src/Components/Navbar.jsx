@@ -172,11 +172,13 @@ export default function Navbar() {
                 <button
                   onClick={() => {
                     setIsOpen(false);
-                    navigate("/dashboard");
+                    navigate(isAdmin ? "/admin-dashboard" : "/dashboard");
                   }}
-                  className="flex-1 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center"
+                  className="flex-1 h-11 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 hover:bg-blue-500/20 transition-all duration-300 flex items-center justify-center gap-2"
                 >
-                  <FontAwesomeIcon icon={faUser} />
+                  <FontAwesomeIcon
+                    icon={isAdmin ? faUserShield : faUser}
+                  />
                 </button>
 
                 <button
