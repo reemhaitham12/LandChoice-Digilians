@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Routes, Route, Navigate } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import Layout from './Components/Layout';
 import Home from './Pages/Home';
 import Explore from './Pages/Explore';
@@ -8,7 +8,8 @@ import Checklist from './Pages/CheckList';
 import News from './Pages/News';
 import CountryDetails from './Pages/CountryDetails';
 import NotFound from './Pages/NotFound';
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import AuthProvider from "./context/AuthContext";
+import { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
@@ -19,10 +20,11 @@ import ResetPassword from "./Pages/ResetPassword";
 import Dashboard from "./Pages/Dashboard";
 import About from "./Pages/About";
 import AdminDashboard from "./Pages/AdminDashboard";
-const HomeRedirect = () => {
-  const { user } = useAuth();
-  return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
-};
+
+// const HomeRedirect = () => {
+//   const { user } = useAuth();
+//   return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
+// };
 
 const routers = createBrowserRouter([
   {
@@ -30,7 +32,7 @@ const routers = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
-
+      { path: 'home', element: <Home /> },
       { path: 'explore', element: <Explore /> },
       { path: 'salary-fit', element: <SalaryFit /> },
       { path: 'compare', element: <ComparyCountry /> },
@@ -69,8 +71,11 @@ const routers = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={routers} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={routers} />
+    </AuthProvider>
+  );
 }
-
 
 export default App;

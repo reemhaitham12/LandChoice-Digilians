@@ -19,7 +19,7 @@ export default function AboutPage() {
     const body = `Name: ${formData.name}\nEmail: ${formData.email}\nCompany: ${formData.company}\nCategory: ${formData.category}\n\nMessage:\n${formData.message}`;
     window.location.href = `mailto:support@landchoice.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,9 +29,9 @@ export default function AboutPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (loading) {
-    return <Loading />;
-  }
+  // if (loading) {
+  //   return <Loading />;
+  // }
   
   return (
     <div className="min-h-screen  text-white font-sans">

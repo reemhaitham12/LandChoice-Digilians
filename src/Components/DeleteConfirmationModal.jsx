@@ -57,7 +57,6 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title = "Delete P
           boxShadow: "0 0 40px rgba(59,130,246,0.15), 0 25px 50px -12px rgba(0,0,0,0.5)",
         }}
       >
-        {/* Close button */}
         <div className="flex justify-end p-4 pb-0">
           <button
             onClick={onClose}
@@ -67,9 +66,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title = "Delete P
           </button>
         </div>
 
-        {/* Content */}
         <div className="px-6 pb-6 text-center">
-          {/* Trash icon */}
           <div 
             className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center"
             style={{
@@ -80,7 +77,6 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title = "Delete P
             <FaTrash className="text-red-500 text-2xl" />
           </div>
 
-          {/* Title */}
           <h3 
             className="text-xl font-semibold mb-2"
             style={{ color: "#F8FAFC" }}
@@ -88,7 +84,6 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title = "Delete P
             {title}
           </h3>
 
-          {/* Message */}
           <p 
             className="text-sm mb-6 leading-relaxed"
             style={{ color: "#94A3B8" }}
@@ -96,7 +91,6 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title = "Delete P
             {message}
           </p>
 
-          {/* Buttons */}
           <div className="flex gap-3">
             <button
               onClick={onClose}
@@ -133,7 +127,6 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm, title = "Delete P
         </div>
       </div>
 
-      {/* Animations */}
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; }

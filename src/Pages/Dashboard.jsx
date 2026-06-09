@@ -6,7 +6,6 @@ import DeleteConfirmationModal from "../Components/DeleteConfirmationModal";
 import { useState, useRef, useEffect } from "react";
 import { FaPen, FaSpinner, FaTimes } from "react-icons/fa";
 
-
 const Dashboard = () => {
   const { user, fetchAllPosts, createPost, deletePost, likePost, unlikePost, addComment, deleteComment } = useAuth();
   const [posts, setPosts] = useState([]);
@@ -17,7 +16,6 @@ const Dashboard = () => {
   const [error, setError] = useState("");
   const titleRef = useRef(null);
   
-  // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
 
@@ -64,24 +62,37 @@ const Dashboard = () => {
     setError("");
     
     const result = await createPost(formData.title.trim(), formData.content.trim());
-    setIsSubmitting(false);
     
     if (result.success) {
-      await loadPosts();
+      const newPost = result.data.post || result.data;
+      const postWithAuthor = {
+        ...newPost,
+        author: newPost.author || {
+          _id: user?._id || user?.id,
+          name: user?.name || user?.email?.split('@')[0],
+          email: user?.email,
+        },
+        comments: [],
+        commentsCount: 0,
+        likes: [],
+        likesCount: 0,
+      };
+      
+      setPosts(prev => [postWithAuthor, ...prev]);
       setFormData({ title: "", content: "" });
       setShowForm(false);
     } else {
       setError(result.error);
     }
+    
+    setIsSubmitting(false);
   };
 
-  // Open delete modal
   const handleDeleteClick = (postId) => {
     setPostToDelete(postId);
     setShowDeleteModal(true);
   };
 
-  // Actual delete after confirmation
   const handleConfirmDelete = async () => {
     if (!postToDelete) return;
     
@@ -158,7 +169,7 @@ const Dashboard = () => {
   const displayName = user?.name || user?.email?.split("@")[0] || "User";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#071028] to-[#0F172A]">
+    <div className="min-h-screen pt-20">
       <div className="flex flex-col lg:flex-row gap-8 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         <div className="lg:w-[300px] flex-shrink-0">
           <Sidebar />
@@ -190,7 +201,7 @@ const Dashboard = () => {
                     </span>
                   </div>
                   <span className="flex-1 text-[#64748B] text-sm bg-[#0B1730] border border-white/10 rounded-2xl px-4 py-3">
-                    What&apos;s on your mind? Share your experience...
+                    What's on your mind? Share your experience...
                   </span>
                 </div>
               </button>
@@ -266,7 +277,6 @@ const Dashboard = () => {
         </main>
       </div>
 
-      {/* Delete Confirmation Modal - Rendered in document.body via Portal */}
       <DeleteConfirmationModal
         isOpen={showDeleteModal}
         onClose={() => {

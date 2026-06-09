@@ -47,7 +47,6 @@ const PostCard = ({ post, currentUser, onDelete, onLike, onComment, onDeleteComm
     currentUser?.id === post.author ||
     currentUser?._id === post.author?._id || 
     currentUser?.id === post.author?.id ||
-    currentUser?._id === post.author?._id ||
     currentUser?.email === post.author?.email;
 
   const handleLike = async () => {
@@ -110,7 +109,6 @@ const PostCard = ({ post, currentUser, onDelete, onLike, onComment, onDeleteComm
 
   return (
     <article className="bg-[#081226] border border-white/[0.08] rounded-[28px] p-6 hover:border-white/20 transition-all duration-300 shadow-[0_0_40px_rgba(59,130,246,0.04)]">
-      {/* Author Header */}
       <div className="flex items-start gap-3 mb-4">
         <div className="w-11 h-11 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/10 flex items-center justify-center bg-[#0B1730]">
           {authorAvatar ? (
@@ -140,20 +138,16 @@ const PostCard = ({ post, currentUser, onDelete, onLike, onComment, onDeleteComm
         )}
       </div>
 
-      {/* Title */}
       <h4 className="text-white font-semibold text-base sm:text-lg mb-2 leading-snug">
         {post.title}
       </h4>
 
-      {/* Content */}
       <p className="text-[#94A3B8] text-sm leading-relaxed mb-5 whitespace-pre-line">
         {post.content}
       </p>
 
-      {/* Divider */}
       <div className="border-t border-white/10 mb-4"></div>
 
-      {/* Actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4 sm:gap-6">
           <button
@@ -175,10 +169,8 @@ const PostCard = ({ post, currentUser, onDelete, onLike, onComment, onDeleteComm
         </div>
       </div>
 
-      {/* Comments Section */}
       {showComments && (
         <div className="mt-4 pt-4 border-t border-white/10">
-          {/* Existing Comments */}
           {post.comments && post.comments.length > 0 && (
             <div className="space-y-3 mb-4">
               {post.comments.map((comment, index) => {
@@ -217,7 +209,6 @@ const PostCard = ({ post, currentUser, onDelete, onLike, onComment, onDeleteComm
             </div>
           )}
 
-          {/* Add Comment */}
           <form onSubmit={handleSubmitComment} className="flex items-center gap-3">
             <input
               type="text"
