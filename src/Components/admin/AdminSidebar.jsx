@@ -1,6 +1,6 @@
 export default function AdminSidebar({ activeTab, setActiveTab }) {
   const linkClass = (tab) =>
-    `w-full text-left px-4 py-3 rounded-lg transition-all duration-200
+    `px-4 py-3 rounded-lg transition-all duration-200 whitespace-nowrap
      ${
        activeTab === tab
          ? "bg-blue-600 text-white"
@@ -8,9 +8,18 @@ export default function AdminSidebar({ activeTab, setActiveTab }) {
      }`;
 
   return (
-    <aside className="w-64 min-h-screen  border-r border-gray-800 p-4 flex flex-col gap-2">
-      
-      <h2 className="text-white text-xl font-bold mb-6">
+    <aside
+      className="
+        w-full md:w-64
+        flex md:flex-col flex-row
+        gap-2
+        p-2 md:p-4
+        border-b md:border-b-0 md:border-r border-gray-800
+        overflow-x-auto
+        bg-gray-900
+      "
+    >
+      <h2 className="text-white text-lg font-bold mr-4 md:mb-6 md:mr-0">
         Admin Panel
       </h2>
 

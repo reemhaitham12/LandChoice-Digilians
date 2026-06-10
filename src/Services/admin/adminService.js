@@ -1,37 +1,39 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_URL = "https://back-end-pro.vercel.app";
+const getToken = () => localStorage.getItem("landchoice_token");
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
+const authHeaders = () => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${getToken()}`,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
+export const getAllUsers = async () => {
+  const res = await axios.get(`${API_URL}/admin/regular-users`, { headers: authHeaders() });
+  return res.data;
+};
 
 export const getAllAdmins = async () => {
-  try {
-    const res = await api.get("/admin/admins");
+  const res = await axios.get(`${API_URL}/admin/admins`, { headers: authHeaders() });
+  return res.data;
+};
 
-    console.log("FULL RESPONSE:", res);
-    console.log("RESPONSE DATA:", res.data);
+export const getRegularUsers = async () => {
+  const res = await axios.get(`${API_URL}/admin/regular-users`, { headers: authHeaders() });
+  return res.data;
+};
 
-    return res.data.admins || [];
-  } catch (error) {
-    console.error("GET ADMINS ERROR:", error);
+export const promoteUserToAdmin = async (email) => {
+  const res = await axios.post(`${API_URL}/admin/promote-to-admin`, { email }, { headers: authHeaders() });
+  return res.data;
+};
 
-    if (error.response) {
-      console.log("STATUS:", error.response.status);
-      console.log("ERROR DATA:", error.response.data);
-    }
+export const demoteAdminToUser = async (email) => {
+  const res = await axios.post(`${API_URL}/admin/demote-to-user`, { email }, { headers: authHeaders() });
+  return res.data;
+};
 
-    return [];
-  }
+export const deleteUser = async (email) => {
+  const res = await axios.delete(`${API_URL}/admin/delete-user`, { headers: authHeaders(), data: { email } });
+  return res.data;
 };
