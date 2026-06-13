@@ -1,43 +1,50 @@
 export default function AdminSidebar({ activeTab, setActiveTab }) {
+  const tabs = [
+    { key: "users", label: "Users" },
+    { key: "admins", label: "Admins" },
+    { key: "countries", label: "Countries" },
+    { key: "ads", label: "Ads" },
+  ];
+
   const linkClass = (tab) =>
-    `px-4 py-3 rounded-lg transition-all duration-200 whitespace-nowrap
+    `px-4 py-3 rounded-xl transition-all duration-200 whitespace-nowrap text-sm font-medium
+     flex items-center justify-center md:justify-start
      ${
        activeTab === tab
-         ? "bg-blue-600 text-white"
+         ? "bg-blue-600 text-white shadow-md shadow-blue-600/20"
          : "text-gray-300 hover:bg-gray-800 hover:text-white"
      }`;
 
   return (
     <aside
-      className="
-        w-full md:w-64
-        flex md:flex-col flex-row
-        gap-2
-        p-2 md:p-4
-        border-b md:border-b-0 md:border-r border-gray-800
-        overflow-x-auto
-        bg-gray-900
-      "
-    >
-      <h2 className="text-white text-lg font-bold mr-4 md:mb-6 md:mr-0">
-        Admin Panel
-      </h2>
+  className="
+    bg-gray-900 border-gray-800
 
-      <button onClick={() => setActiveTab("users")} className={linkClass("users")}>
-        Users
-      </button>
+    /* Mobile */
+    flex flex-row overflow-x-auto gap-2 p-3 border-b rounded-2xl
 
-      <button onClick={() => setActiveTab("admins")} className={linkClass("admins")}>
-        Admins
-      </button>
-
-      <button onClick={() => setActiveTab("countries")} className={linkClass("countries")}>
-        Countries
-      </button>
-
-      <button onClick={() => setActiveTab("ads")} className={linkClass("ads")}>
-        Ads
-      </button>
+    /* Desktop */
+    md:flex-col
+    md:w-64
+    md:p-5
+    md:ml-4
+    md:mt-4
+    md:h-[calc(100vh-2rem)]
+    md:rounded-2xl
+    md:border
+    md:overflow-visible
+  "
+>
+      {/* Tabs */}
+      {tabs.map((tab) => (
+        <button
+          key={tab.key}
+          onClick={() => setActiveTab(tab.key)}
+          className={linkClass(tab.key)}
+        >
+          {tab.label}
+        </button>
+      ))}
     </aside>
   );
 }

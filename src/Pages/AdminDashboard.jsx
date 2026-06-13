@@ -63,10 +63,10 @@ export default function AdminDashboard() {
     }
   }, [activeTab]);
 
- 
 
 
-  
+
+
   // ───────── DELETE ─────────
   const handleDelete = async (id) => {
     try {
@@ -117,48 +117,65 @@ export default function AdminDashboard() {
   const handleAdd = () => {
     setShowAddModal(true);
   };
- const handleCreateAd = async () => {
-  try {
-    console.log("Sending Ad:", newAd);
+  const handleCreateAd = async () => {
+    try {
+      console.log("Sending Ad:", newAd);
 
-    await createAd({
-      ...newAd,
-      startDate: new Date(newAd.startDate).toISOString(),
-      endDate: new Date(newAd.endDate).toISOString(),
-    });
+      await createAd({
+        ...newAd,
+        startDate: new Date(newAd.startDate).toISOString(),
+        endDate: new Date(newAd.endDate).toISOString(),
+      });
 
-    fetchAds();
-    setShowAddModal(false);
-  } catch (error) {
-    console.log(error.response?.data);
-    console.error(error);
-  }
-};
+      fetchAds();
+      setShowAddModal(false);
+    } catch (error) {
+      console.log(error.response?.data);
+      console.error(error);
+    }
+  };
 
   return (
-    <div className="min-h-screen py-5 bg-dark-900 text-white flex">
-      <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+    <div className="min-h-screen bg-dark-900 text-white flex flex-col md:flex-row py-5">
 
-      <main className="flex-1 p-6 pt-[73px]">
+     <div className="hidden md:block">
+  <div className="pt-[60px] px-4">
+    <div className=" rounded-2xl shadow-lg">
+      <AdminSidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
+    </div>
+  </div>
+</div>
+
+      {/* Main */}
+      <main className="flex-1 p-4 md:p-6 pt-20 md:pt-[73px]">
+
+        {/* Mobile Tabs */}
+        <div className="md:hidden mb-4">
+          <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        </div>
+
+        {/* Content */}
         {activeTab === "users" && <UsersTab />}
         {activeTab === "admins" && <AdminsTab />}
         {activeTab === "countries" && <CountriesTab />}
 
         {activeTab === "ads" && (
-          <>
-            {loadingAds ? (
-              <p>Loading ads...</p>
-            ) : (
-              <AdsTab
-                ads={ads}
-                onAdd={handleAdd}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onToggle={handleToggle}
-              />
-            )}
-          </>
+          loadingAds ? (
+            <p>Loading ads...</p>
+          ) : (
+            <AdsTab
+              ads={ads}
+              onAdd={handleAdd}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onToggle={handleToggle}
+            />
+          )
         )}
+
       </main>
       {showAddModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
