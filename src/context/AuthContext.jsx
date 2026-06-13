@@ -11,7 +11,7 @@ export const useAuth = () => {
   return context;
 };
 
-const API_BASE_URL = "/api";
+const API_BASE_URL = "https://back-end-pro.vercel.app";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
