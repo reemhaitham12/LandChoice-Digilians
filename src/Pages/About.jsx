@@ -12,14 +12,49 @@ export default function AboutPage() {
     category: 'Visa Assistance Services',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const subject = `Advertisement Request from ${formData.name}`;
-    const body = `Name: ${formData.name}\nEmail: ${formData.email}\nCompany: ${formData.company}\nCategory: ${formData.category}\n\nMessage:\n${formData.message}`;
-    window.location.href = `mailto:support@landchoice.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await fetch('https://back-end-pro.vercel.app/ad-request/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          companyName: formData.company,  
+          category: formData.category,
+          message: formData.message
+        })
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          company: '',
+          category: 'Visa Assistance Services',
+          message: ''
+        });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,12 +64,8 @@ export default function AboutPage() {
     return () => clearTimeout(timer);
   }, []);
 
-  // if (loading) {
-  //   return <Loading />;
-  // }
-  
   return (
-    <div className="min-h-screen  text-white font-sans">
+    <div className="min-h-screen text-white font-sans">
       {/* Hero Section */}
       <section className="pt-16 pb-12 px-6 text-center pt-32">
         <span className="inline-block px-4 py-1.5 text-xs font-semibold tracking-wider text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full mb-6">
@@ -111,9 +142,21 @@ export default function AboutPage() {
           <div className="bg-[#0F172A] border border-white/5 rounded-2xl p-8">
             <h3 className="text-lg font-semibold mb-1">Request an Advertisement</h3>
             <p className="text-gray-400 text-xs mb-6 leading-relaxed">
-              Fill out the form below to automatically draft an email to our Customer Service team.
+              Fill out the form below to send your request to our team.
               We will review your offer and get back to you!
             </p>
+
+            {/* Success/Error Messages */}
+            {submitStatus === 'success' && (
+              <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm">
+                ✅ Request sent successfully! We'll get back to you soon.
+              </div>
+            )}
+            {submitStatus === 'error' && (
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                ❌ Failed to send request. Please try again.
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
@@ -126,6 +169,7 @@ export default function AboutPage() {
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
@@ -137,6 +181,7 @@ export default function AboutPage() {
                     value={formData.email}
                     onChange={e => setFormData({ ...formData, email: e.target.value })}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -150,6 +195,7 @@ export default function AboutPage() {
                     className="w-full bg-[#1E293B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition"
                     value={formData.company}
                     onChange={e => setFormData({ ...formData, company: e.target.value })}
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div>
@@ -158,6 +204,7 @@ export default function AboutPage() {
                     className="w-full bg-[#1E293B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500/50 transition appearance-none"
                     value={formData.category}
                     onChange={e => setFormData({ ...formData, category: e.target.value })}
+                    disabled={isSubmitting}
                   >
                     <option>Visa Assistance Services</option>
                     <option>Housing & Rentals</option>
@@ -177,15 +224,17 @@ export default function AboutPage() {
                   value={formData.message}
                   onChange={e => setFormData({ ...formData, message: e.target.value })}
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition mt-2"
+                disabled={isSubmitting}
+                className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition mt-2"
               >
                 <Send className="w-4 h-4" />
-                Open Mail Client & Send Request
+                {isSubmitting ? 'Sending...' : 'Submit Request'}
               </button>
             </form>
           </div>
