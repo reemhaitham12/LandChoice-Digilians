@@ -149,12 +149,12 @@ export default function AboutPage() {
             {/* Success/Error Messages */}
             {submitStatus === 'success' && (
               <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm">
-                ✅ Request sent successfully! We'll get back to you soon.
+                Your request has been sent successfully! Our team will review it and get back to you shortly.
               </div>
             )}
             {submitStatus === 'error' && (
               <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-                ❌ Failed to send request. Please try again.
+                 Failed to send request. Please try again.
               </div>
             )}
 
