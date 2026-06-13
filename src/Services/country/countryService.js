@@ -39,11 +39,13 @@ export const updateCountry = async (countryId, countryData) => {
   const res = await axios.put(
     `${API_URL}/countries?id=${countryId}`,
     countryData,
-    { headers: authHeaders() }
+    {
+      headers: authHeaders(),
+    }
   );
+
   return res.data;
 };
-
 export const deleteCountry = async (countryId) => {
   const res = await axios.delete(`${API_URL}/countries?id=${countryId}`, {
     headers: authHeaders(),
