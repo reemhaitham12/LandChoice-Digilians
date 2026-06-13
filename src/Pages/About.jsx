@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Loading from "../Components/Loading.jsx";
+// import Loading from "../Components/Loading.jsx";
 import {
   Globe, DollarSign, MessageSquare, Mail, MapPin, Send
 } from 'lucide-react';
@@ -56,13 +56,13 @@ export default function AboutPage() {
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     // setLoading(false);
+  // //   }, 1500);
 
-    return () => clearTimeout(timer);
-  }, []);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   return (
     <div className="min-h-screen text-white font-sans">
