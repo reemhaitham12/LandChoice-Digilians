@@ -14,7 +14,7 @@ import {
   toggleAdStatus,
   updateAd,
   createAd,
-} from "../services/ads/adsService";
+} from "../Services/ads/adsService";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
