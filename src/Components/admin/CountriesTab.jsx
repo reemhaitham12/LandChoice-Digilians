@@ -1,6 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { Search, Plus, X, ChevronLeft, ChevronRight, Check, AlertCircle } from "lucide-react";
 import {
+  Search,
+  Plus,
+
+} from "lucide-react";
+import {
   getAllCountries,
   addCountry,
   updateCountry,
@@ -271,6 +276,20 @@ export default function CountriesTab() {
     }
     if (form.bestFor.length === 0) {
       setError("Please add at least one 'Best For' category");
+      return;
+    }
+
+    setError("");
+
+    const hasEmptyField = requiredFields.some((field) => !form[field]);
+
+    if (hasEmptyField) {
+      setError("Please fill all fields.");
+      return;
+    }
+
+    if (!form.coordinates.lat || !form.coordinates.lng) {
+      setError("Please enter coordinates.");
       return;
     }
 

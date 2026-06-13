@@ -165,10 +165,10 @@ const Explore = () => {
                     }
                     className="w-full bg-dark-800 border border-white/10 rounded-xl px-4 py-3 text-sm text-white appearance-none focus:outline-none focus:ring-2 focus:ring-primary/40"
                   >
-                    <option value={0}>Any duration</option>
-                    <option value={6}>6+ Months</option>
-                    <option value={12}>1+ Year</option>
-                    <option value={24}>2+ Years</option>
+                    <option value={0} className="text-black">Any duration</option>
+                    <option value={6} className="text-black">6+ Months</option>
+                    <option value={12} className="text-black">1+ Year</option>
+                    <option value={24} className="text-black">2+ Years</option>
                   </select>
                   <FontAwesomeIcon
                     icon={faChevronDown}
@@ -178,7 +178,7 @@ const Explore = () => {
               </div>
 
               {/* Cost of Living Slider */}
-              <div>
+              {/* <div>
                 <div className="flex justify-between mb-4">
                   <label className="text-sm font-semibold text-white">
                     Max Cost of Living
@@ -202,9 +202,9 @@ const Explore = () => {
                   <span>Cheap</span>
                   <span>Expensive</span>
                 </div>
-              </div>
+              </div> */}
 
-              {/* Quality of Life */}
+              {/* Quality of Life
               <div>
                 <div className="flex justify-between mb-4">
                   <label className="text-sm font-semibold text-white">
@@ -229,7 +229,7 @@ const Explore = () => {
                     </button>
                   ))}
                 </div>
-              </div>
+              </div> */}
 
               {/* Processing Time */}
               <div>
@@ -241,11 +241,10 @@ const Explore = () => {
                     <button
                       key={mode}
                       onClick={() => updateFilter("processing", mode)}
-                      className={`py-2 rounded-lg text-xs font-bold border transition-all ${
-                        filters.processing === mode
-                          ? "bg-primary/20 text-primary-light border-primary/40"
-                          : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10"
-                      }`}
+                      className={`py-2 rounded-lg text-xs font-bold border transition-all ${filters.processing === mode
+                        ? "bg-primary/20 text-primary-light border-primary/40"
+                        : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10"
+                        }`}
                     >
                       {mode}
                     </button>
@@ -401,7 +400,7 @@ const CountryCard = forwardRef(({ country }, ref) => {
           </div>
           <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-primary"
+              className="h-full bg-blue-500"
               style={{ width: `${country.costOfLivingIndex}%` }}
             />
           </div>
@@ -411,13 +410,12 @@ const CountryCard = forwardRef(({ country }, ref) => {
       <div className="p-4 bg-white/5 border-t border-white/5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span
-            className={`w-2 h-2 rounded-full ${
-              country.difficulty === "Easy"
-                ? "bg-green-400"
-                : country.difficulty === "Medium"
-                  ? "bg-yellow-400"
-                  : "bg-red-400"
-            }`}
+            className={`w-2 h-2 rounded-full ${country.difficulty === "Easy"
+              ? "bg-green-400"
+              : country.difficulty === "Medium"
+                ? "bg-yellow-400"
+                : "bg-red-400"
+              }`}
           />
           <span className="text-xs text-slate-300 font-medium">
             {country.difficulty}

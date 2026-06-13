@@ -55,9 +55,9 @@ const News = () => {
     e.target.src = PLACEHOLDER_IMAGE;
   };
 
-  if (visaLoading) {
-  return <Loading />;
-}
+//   if (visaLoading) {
+//   return <Loading />;
+// }
   return (
     <div className="w-full max-w-7xl mx-auto md:p-12 pt-24 md:pt-32 mb-10">
       {/* Header */}
