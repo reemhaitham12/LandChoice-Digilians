@@ -7,7 +7,7 @@ import { useState, useRef, useEffect } from "react";
 import { FaPen, FaSpinner, FaTimes } from "react-icons/fa";
 
 const Dashboard = () => {
-  const { user, fetchAllPosts, createPost, deletePost, likePost, unlikePost, addComment, deleteComment } = useAuth();
+  const { user, fetchAllPosts, createPost, updatePost, deletePost, likePost, unlikePost, addComment, deleteComment } = useAuth();
   const [posts, setPosts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: "", content: "" });
@@ -69,7 +69,7 @@ const Dashboard = () => {
         ...newPost,
         author: newPost.author || {
           _id: user?._id || user?.id,
-          name: user?.name || user?.email?.split('@')[0],
+          name: user?.name || user?.email?.split("@")[0],
           email: user?.email,
         },
         comments: [],
@@ -105,17 +105,32 @@ const Dashboard = () => {
     setPostToDelete(null);
   };
 
-  const handleLike = async (postId, isLiked) => {
-    const result = isLiked ? await unlikePost(postId) : await likePost(postId);
+  // EDIT handler
+  const handleEdit = async (postId, newTitle, newContent) => {
+    const result = await updatePost(postId, newTitle, newContent);
+    
     if (result.success) {
       setPosts(posts.map((p) => {
         if (p._id !== postId) return p;
-        const newLikesCount = isLiked 
-          ? Math.max(0, (p.likesCount || 1) - 1)
-          : (p.likesCount || 0) + 1;
-        return { ...p, likesCount: newLikesCount };
+        return { ...p, title: newTitle, content: newContent };
       }));
+      return { success: true };
+    } else {
+      setError(result.error);
+      return { success: false, error: result.error };
     }
+  };
+
+  // LIKE handler
+  const handleLike = async (postId) => {
+    const result = await likePost(postId);
+    return result;
+  };
+
+  // UNLIKE handler
+  const handleUnlike = async (postId) => {
+    const result = await unlikePost(postId);
+    return result;
   };
 
   const handleAddComment = async (postId, text) => {
@@ -268,8 +283,10 @@ const Dashboard = () => {
                   currentUser={user}
                   onDelete={handleDeleteClick}
                   onLike={handleLike}
+                  onUnlike={handleUnlike}
                   onComment={handleAddComment}
                   onDeleteComment={handleDeleteComment}
+                  onEdit={handleEdit}
                 />
               ))}
             </div>
