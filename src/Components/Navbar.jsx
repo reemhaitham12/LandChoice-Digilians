@@ -68,18 +68,23 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-[#111827]/95 via-[#172554]/90 to-[#111827]/95 backdrop-blur-xl border-b border-white/10 px-3 sm:px-4 lg:px-6 py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <Link
-          to="/"
-          onClick={() => setIsOpen(false)}
-          className="flex items-center gap-2 sm:gap-3"
-        >
-          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#6C8FD9] to-[#f29706] flex items-center justify-center shadow-[0_0_25px_rgba(214,168,95,0.25)]">
-            <FontAwesomeIcon icon={faGlobe} className="text-white text-lg" />
+        <Link className="flex items-center gap-3 no-underline z-50 group" to="/">
+          <div className="flex items-center justify-center  transition-all duration-300">
+            <img
+              src="/images/logo.png"
+              alt="Logo"
+              className="w-12 h-12 lg:w-14 lg:h-14 object-contain invert brightness-0"
+            />
           </div>
 
-          <h1 className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight text-white">
-            Land<span className="text-blue-400">Choice</span>
-          </h1>
+          <div className="flex flex-col justify-center">
+
+            <span className="text-white font-black text-xl lg:text-xl tracking-tighter italic italic-style font-serif">
+              Land Choice
+            </span>
+
+
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
