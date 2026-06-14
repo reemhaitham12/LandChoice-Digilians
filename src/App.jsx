@@ -1,15 +1,14 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import Layout from './Components/Layout';
-import Home from './Pages/Home';
-import Explore from './Pages/Explore';
-import SalaryFit from './Pages/SalaryFit';
-import ComparyCountry from './Pages/CompareCountry';
-import Checklist from './Pages/CheckList';
-import News from './Pages/News';
-import CountryDetails from './Pages/CountryDetails';
-import NotFound from './Pages/NotFound';
-import AuthProvider from "./context/AuthContext";
-import { useAuth } from "./context/AuthContext";
+import  Home  from './Pages/Home';
+import  Explore  from './Pages/Explore';
+import  SalaryFit  from './Pages/SalaryFit';
+import  ComparyCountry  from './Pages/CompareCountry';
+import  Checklist  from './Pages/CheckList';
+import  News  from './Pages/News';
+import  CountryDetails  from './Pages/CountryDetails';
+import  NotFound  from './Pages/NotFound';
+import AuthProvider, { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
@@ -18,6 +17,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import VerifyResetCode from "./Pages/VerifyResetCode";
 import ResetPassword from "./Pages/ResetPassword";
 import Dashboard from "./Pages/Dashboard";
+import Community from "./Pages/Community";
 import About from "./Pages/About";
 import AdminDashboard from "./Pages/AdminDashboard";
 
@@ -40,6 +40,7 @@ const routers = createBrowserRouter([
       { path: 'news', element: <News /> },
       { path: 'about', element: <About /> },
       { path: 'country/:id', element: <CountryDetails /> },
+      { path: 'community', element: <Community /> },
 
       { path: 'login', element: <Login /> },
       { path: 'signup', element: <Signup /> },

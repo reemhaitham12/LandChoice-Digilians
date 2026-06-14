@@ -1,10 +1,12 @@
+import Navbar from "../Components/Navbar";
 import { useAuth } from "../context/AuthContext";
 import Sidebar from "../Components/Sidebar";
 import PostCard from "../Components/PostCard";
 import EmptyState from "../Components/EmptyState";
 import DeleteConfirmationModal from "../Components/DeleteConfirmationModal";
 import { useState, useRef, useEffect } from "react";
-import { FaPen, FaSpinner, FaTimes } from "react-icons/fa";
+import { FaPen, FaSpinner, FaTimes , FaHome, FaChartLine, FaUsers, FaCog } from "react-icons/fa";
+
 
 const Dashboard = () => {
   const { user, fetchAllPosts, createPost, updatePost, deletePost, likePost, unlikePost, addComment, deleteComment } = useAuth();

@@ -13,6 +13,7 @@ import {
   faRss,
   faRightFromBracket,
   faUser,
+  faUsers,
   faBars,
   faXmark,
   faInfoCircle,
@@ -56,6 +57,7 @@ export default function Navbar() {
     { to: "/compare", label: "Compare", icon: faProjectDiagram },
     { to: "/checklist", label: "Checklist", icon: faCheckSquare },
     { to: "/news", label: "News", icon: faRss },
+    { to: "/community", label: "Community", icon: faUsers },
   ];
 
   const linkClass = (isActive) =>

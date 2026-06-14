@@ -152,6 +152,15 @@ export default function AdminTabs() {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   useEffect(() => {
     fetchData();
@@ -256,9 +265,9 @@ export default function AdminTabs() {
       {error && (
         <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-300">
           <p className="font-medium">{error}</p>
-          <button onClick={() => setError(null)} className="mt-2 text-sm underline hover:text-red-200">
+          {/* <button onClick={() => setError(null)} className="mt-2 text-sm underline hover:text-red-200">
             Dismiss
-          </button>
+          </button> */}
         </div>
       )}
 
