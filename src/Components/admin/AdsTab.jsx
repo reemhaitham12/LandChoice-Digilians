@@ -164,62 +164,63 @@ export default function AdsTab() {
           <Plus className="w-4 h-4" /> Add Ads
         </button>
       </div>
-      {ads.length === 0 ? <p className="text-gray-400">No ads found</p> : ads.map((ad) => (
-        <div
-          key={ad._id}
-          className="
-    p-5 bg-white/5 border border-white/10 rounded-2xl mb-4
-    flex flex-col gap-4
-    md:flex-row md:justify-between md:items-center
-  "
-        >
-          {/* Content */}
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-white mb-2">
-              {ad.title}
-            </h3>
-
-            <p className="text-sm text-gray-400 leading-6">
-              {ad.description || "No description available"}
-            </p>
-          </div>
-
-          {/* Buttons */}
+      {ads.length === 0 ? (
+        <p className="text-gray-400">No ads found</p>
+      ) : (
+        ads.map((ad) => (
           <div
+            key={ad._id}
             className="
-      flex flex-col gap-2
-      sm:flex-row
-      md:w-auto
-    "
+        p-5 bg-white/5 border border-white/10 rounded-2xl mb-4
+        flex flex-col gap-4
+        md:flex-row md:justify-between md:items-center
+      "
           >
-            <button
-              onClick={() => onToggle(ad._id)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium border transition
-      ${ad.isActive
-                  ? "bg-green-500/20 text-green-300 border-green-500/30 hover:bg-green-500/30"
-                  : "bg-gray-500/20 text-gray-300 border-gray-500/30 hover:bg-gray-500/30"
-                }`}
-            >
-              {ad.isActive ? "Active" : "Inactive"}
-            </button>
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-white mb-2">
+                {ad.title}
+              </h3>
 
-            <button
-              onClick={() => handleEditClick(ad)}
-              className="px-4 py-2 rounded-xl text-sm font-medium bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition"
-            >
-              Edit
-            </button>
+              <p className="text-sm text-gray-400 leading-6">
+                {ad.description || "No description available"}
+              </p>
+            </div>
 
-            <button
-              onClick={() => onDelete(ad._id)}
-              className="px-4 py-2 rounded-xl text-sm font-medium bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 transition"
+            <div
+              className="
+          flex flex-col gap-2
+          sm:flex-row
+          md:w-auto
+        "
             >
-              Delete
-            </button>
+              <button
+                onClick={() => handleToggle(ad._id)}
+                className={`px-4 py-2 rounded-xl text-sm font-medium border transition
+          ${ad.isActive
+                    ? "bg-green-500/20 text-green-300 border-green-500/30 hover:bg-green-500/30"
+                    : "bg-gray-500/20 text-gray-300 border-gray-500/30 hover:bg-gray-500/30"
+                  }`}
+              >
+                {ad.isActive ? "Active" : "Inactive"}
+              </button>
+
+              <button
+                onClick={() => handleEditClick(ad)}
+                className="px-4 py-2 rounded-xl text-sm font-medium bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition"
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={() => handleDelete(ad._id)}
+                className="px-4 py-2 rounded-xl text-sm font-medium bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 transition"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))
       )}
-
       {/* Add Modal */}
       {addOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50" onClick={(e) => e.target === e.currentTarget && closeModal()}>
@@ -255,9 +256,16 @@ export default function AdsTab() {
       )}
 
       {/* Toasts */}
-      <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-3">
+      <div className="fixed top-4 right-4 flex flex-col gap-2 z-50">
         {toasts.map((toast) => (
-          <div key={toast.id} className={`min-w-[280px] px-4 py-3 rounded-xl text-sm font-medium shadow-xl border backdrop-blur-xl transition-all duration-300 ${toast.type === "success" ? "bg-green-500/10 border-green-500/30 text-green-300" : "bg-red-500/10 border-red-500/30 text-red-300"}`}>
+          <div
+            key={toast.id}
+            className={`px-4 py-2 rounded-xl text-sm shadow-lg border
+        ${toast.type === "success"
+                ? "bg-green-500/20 text-green-300 border-green-500/30"
+                : "bg-red-500/20 text-red-300 border-red-500/30"
+              }`}
+          >
             {toast.message}
           </div>
         ))}
