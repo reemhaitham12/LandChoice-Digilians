@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, X } from "lucide-react";
-import { createAd, updateAd } from "../../Services/ads/adsService";
+import { createAd, updateAd, deleteAd, toggleAdStatus, getAllAds } from "../../Services/ads/adsService";
 
-export default function AdsTab({ ads = [], onToggle, onDelete }) {
+export default function AdsTab() {
+  const [ads, setAds] = useState([]);
+  const [loadingAds, setLoadingAds] = useState(true);
   const [editAd, setEditAd] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
@@ -16,16 +18,31 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
     }, 3000);
   };
 
+  const fetchAds = async () => {
+    try {
+      setLoadingAds(true);
+      const data = await getAllAds();
+      setAds(data || []);
+    } catch (err) {
+      addToast("Failed to load ads", "error");
+    } finally {
+      setLoadingAds(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAds();
+  }, []);
+
   const emptyForm = {
     title: "", description: "", companyName: "",
-    linkUrl: "", startDate: "", endDate: "", position: "",
+    linkUrl: "", startDate: "", endDate: "",
   };
 
   const [form, setForm] = useState(emptyForm);
   const [addForm, setAddForm] = useState(emptyForm);
 
   const resetForms = () => { setForm(emptyForm); setAddForm(emptyForm); };
-
   const closeModal = () => { setEditAd(null); setAddOpen(false); resetForms(); };
 
   const handleEditClick = (ad) => {
@@ -36,7 +53,6 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
       linkUrl: ad.linkUrl || "",
       startDate: ad.startDate?.slice(0, 10) || "",
       endDate: ad.endDate?.slice(0, 10) || "",
-      position: ad.position ?? "",
     });
     setEditAd(ad._id);
   };
@@ -48,12 +64,37 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
     return true;
   };
 
-  // ✅ الحل: دايماً نرجع string مش object
   const parseError = (err) => {
     const data = err.response?.data;
     if (typeof data === "string") return data;
     if (data && typeof data === "object") return data.message || data.error || "Something went wrong";
     return err.message || "Something went wrong";
+  };
+
+  //  Optimistic delete
+  const handleDelete = async (id) => {
+    setAds((prev) => prev.filter((ad) => ad._id !== id));
+    try {
+      await deleteAd(id);
+      addToast("Ad deleted successfully ", "success");
+    } catch (err) {
+      addToast(parseError(err), "error");
+      fetchAds(); // rollback
+    }
+  };
+
+  //  Optimistic toggle
+  const handleToggle = async (id) => {
+    setAds((prev) =>
+      prev.map((ad) => ad._id === id ? { ...ad, isActive: !ad.isActive } : ad)
+    );
+    try {
+      await toggleAdStatus(id);
+      addToast("Ad status updated ", "success");
+    } catch (err) {
+      addToast(parseError(err), "error");
+      fetchAds(); // rollback
+    }
   };
 
   const handleCreate = async () => {
@@ -62,12 +103,12 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
       setLoading(true);
       await createAd({
         ...addForm,
-        position: Number(addForm.position || 0),
         startDate: new Date(addForm.startDate).toISOString(),
         endDate: new Date(addForm.endDate).toISOString(),
       });
-      addToast("Ad created successfully 🎉", "success");
+      addToast("Ad created successfully ", "success");
       closeModal();
+      fetchAds();
     } catch (err) {
       addToast(parseError(err), "error");
     } finally {
@@ -81,12 +122,12 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
       setLoading(true);
       await updateAd(editAd, {
         ...form,
-        position: Number(form.position || 0),
         startDate: new Date(form.startDate).toISOString(),
         endDate: new Date(form.endDate).toISOString(),
       });
-      addToast("Ad updated successfully ✅", "success");
+      addToast("Ad updated successfully ", "success");
       closeModal();
+      fetchAds();
     } catch (err) {
       addToast(parseError(err), "error");
     } finally {
@@ -112,7 +153,6 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
           <input type="date" value={data.endDate} onChange={(e) => setData({ ...data, endDate: e.target.value })} className={inputClass} />
         </div>
       </div>
-      <input type="number" placeholder="Position" value={data.position} onChange={(e) => setData({ ...data, position: e.target.value })} className={inputClass} />
     </div>
   );
 
@@ -124,7 +164,6 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
           <Plus className="w-4 h-4" /> Add Ads
         </button>
       </div>
-
       {ads.length === 0 ? <p className="text-gray-400">No ads found</p> : ads.map((ad) => (
         <div
           key={ad._id}
@@ -178,9 +217,10 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
               Delete
             </button>
           </div>
-        </div>
-      ))}
+        ))
+      )}
 
+      {/* Add Modal */}
       {addOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50" onClick={(e) => e.target === e.currentTarget && closeModal()}>
           <div className="w-[520px] max-w-[95%] rounded-2xl p-6 relative bg-gradient-to-b from-[#0b1220] to-[#0f1b33] border border-blue-500/20 shadow-[0_0_50px_rgba(59,130,246,0.20)]" onClick={(e) => e.stopPropagation()}>
@@ -197,6 +237,7 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
         </div>
       )}
 
+      {/* Edit Modal */}
       {editAd && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50" onClick={(e) => e.target === e.currentTarget && closeModal()}>
           <div className="w-[520px] max-w-[95%] rounded-2xl p-6 relative bg-gradient-to-b from-[#0b1220] to-[#0f1b33] border border-blue-500/20 shadow-[0_0_50px_rgba(59,130,246,0.20)]" onClick={(e) => e.stopPropagation()}>
@@ -213,6 +254,7 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
         </div>
       )}
 
+      {/* Toasts */}
       <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-3">
         {toasts.map((toast) => (
           <div key={toast.id} className={`min-w-[280px] px-4 py-3 rounded-xl text-sm font-medium shadow-xl border backdrop-blur-xl transition-all duration-300 ${toast.type === "success" ? "bg-green-500/10 border-green-500/30 text-green-300" : "bg-red-500/10 border-red-500/30 text-red-300"}`}>
