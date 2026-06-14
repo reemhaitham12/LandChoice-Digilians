@@ -11,7 +11,7 @@ const authHeaders = () => ({
 
 export const getAllCountries = async () => {
   const res = await axios.get(`${API_URL}/countries`);
-  return res.data.countries; // 👈 مهم جدًا
+  return res.data.countries; 
 };
 
 export const getCountryById = async (countryId) => {
@@ -37,7 +37,7 @@ export const addCountry = async (countryData) => {
 
 export const updateCountry = async (countryId, countryData) => {
   const res = await axios.put(
-    `${API_URL}/countries?id=${countryId}`,
+    `${API_URL}/countries?country_id=${countryId}`,
     countryData,
     {
       headers: authHeaders(),
@@ -47,7 +47,7 @@ export const updateCountry = async (countryId, countryData) => {
   return res.data;
 };
 export const deleteCountry = async (countryId) => {
-  const res = await axios.delete(`${API_URL}/countries?id=${countryId}`, {
+  const res = await axios.delete(`${API_URL}/countries?country_id=${countryId}`, {
     headers: authHeaders(),
   });
   return res.data;
