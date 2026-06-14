@@ -1,4 +1,4 @@
-# LandChoise🌍
+# LandChoice🌍
 
 A modern web application built with React and Vite to help digital nomads track, compare, and manage their visa requirements worldwide.
 

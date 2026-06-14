@@ -6,6 +6,7 @@ import AuthProvider from "./context/AuthContext";
 import { VisaProvider } from "./context/visaContext";
 import CommunityProvider from "./context/CommunityContext";
 
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>

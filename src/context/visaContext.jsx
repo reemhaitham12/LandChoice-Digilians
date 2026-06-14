@@ -7,30 +7,30 @@ export function VisaProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/countries")
-      .then((res) => res.json())
-      .then((data) => {
-         // console.log("API DATA:", data);
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/countries`);
+        const data = await res.json();
 
-        const countries = Array.isArray(data)
-          ? data
-          : Array.isArray(data.countries)
-            ? data.countries
-            : [];
+        // console.log("API DATA:", data);
+
+        const countries = data?.countries || [];
 
         const formattedData = countries.map((country) => ({
           ...country,
-          id: country.country_id,
+          id: country.country_id || country._id,
         }));
 
         setVisaData(formattedData);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("API Error:", err);
+      } catch (err) {
+        // console.error("API Error:", err);
         setVisaData([]);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchCountries();
   }, []);
 
   return (
