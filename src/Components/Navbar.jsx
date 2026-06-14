@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 import {
   faGlobe,
@@ -13,6 +13,7 @@ import {
   faRss,
   faRightFromBracket,
   faUser,
+  faUsers,
   faBars,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -35,6 +36,7 @@ export default function Navbar() {
     { to: "/compare", label: "Compare", icon: faProjectDiagram },
     { to: "/checklist", label: "Checklist", icon: faCheckSquare },
     { to: "/news", label: "News", icon: faRss },
+    { to: "/community", label: "Community", icon: faUsers },
   ];
 
   const linkClass = ({ isActive }) =>

@@ -8,7 +8,7 @@ import  Checklist  from './Pages/CheckList';
 import  News  from './Pages/News';
 import  CountryDetails  from './Pages/CountryDetails';
 import  NotFound  from './Pages/NotFound';
-import AuthProvider, { useAuth } from "./Context/AuthContext";
+import AuthProvider, { useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
@@ -17,6 +17,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import VerifyResetCode from "./Pages/VerifyResetCode";
 import ResetPassword from "./Pages/ResetPassword";
 import Dashboard from "./Pages/Dashboard";
+import Community from "./Pages/Community";
 
 const HomeRedirect = () => {
   const { user } = useAuth();
@@ -36,6 +37,7 @@ const routers = createBrowserRouter([
       { path: 'checklist', element: <Checklist /> },
       { path: 'news', element: <News /> },
       { path: 'country/:id', element: <CountryDetails /> },
+      { path: 'community', element: <Community /> },
 
       { path: 'login', element: <Login /> },
       { path: 'signup', element: <Signup /> },
@@ -59,8 +61,11 @@ const routers = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={routers} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={routers} />
+    </AuthProvider>
+  );
 }
-
 
 export default App;
