@@ -172,6 +172,7 @@ export default function AdminDashboard() {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onToggle={handleToggle}
+              onRefresh={fetchAds}
             />
           )
         )}

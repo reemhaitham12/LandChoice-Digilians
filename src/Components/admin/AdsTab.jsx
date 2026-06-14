@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { createAd, updateAd } from "../../Services/ads/adsService";
 
-export default function AdsTab({ ads = [], onToggle, onDelete }) {
+export default function AdsTab({ ads = [], onToggle, onDelete, onRefresh }) {
   const [editAd, setEditAd] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
@@ -18,14 +18,13 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
 
   const emptyForm = {
     title: "", description: "", companyName: "",
-    linkUrl: "", startDate: "", endDate: "", position: "",
+    linkUrl: "", startDate: "", endDate: "",
   };
 
   const [form, setForm] = useState(emptyForm);
   const [addForm, setAddForm] = useState(emptyForm);
 
   const resetForms = () => { setForm(emptyForm); setAddForm(emptyForm); };
-
   const closeModal = () => { setEditAd(null); setAddOpen(false); resetForms(); };
 
   const handleEditClick = (ad) => {
@@ -36,7 +35,6 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
       linkUrl: ad.linkUrl || "",
       startDate: ad.startDate?.slice(0, 10) || "",
       endDate: ad.endDate?.slice(0, 10) || "",
-      position: ad.position ?? "",
     });
     setEditAd(ad._id);
   };
@@ -48,7 +46,6 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
     return true;
   };
 
-  // ✅ الحل: دايماً نرجع string مش object
   const parseError = (err) => {
     const data = err.response?.data;
     if (typeof data === "string") return data;
@@ -62,12 +59,12 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
       setLoading(true);
       await createAd({
         ...addForm,
-        position: Number(addForm.position || 0),
         startDate: new Date(addForm.startDate).toISOString(),
         endDate: new Date(addForm.endDate).toISOString(),
       });
       addToast("Ad created successfully 🎉", "success");
       closeModal();
+      onRefresh?.();
     } catch (err) {
       addToast(parseError(err), "error");
     } finally {
@@ -81,12 +78,12 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
       setLoading(true);
       await updateAd(editAd, {
         ...form,
-        position: Number(form.position || 0),
         startDate: new Date(form.startDate).toISOString(),
         endDate: new Date(form.endDate).toISOString(),
       });
       addToast("Ad updated successfully ✅", "success");
       closeModal();
+      onRefresh?.();
     } catch (err) {
       addToast(parseError(err), "error");
     } finally {
@@ -112,7 +109,6 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
           <input type="date" value={data.endDate} onChange={(e) => setData({ ...data, endDate: e.target.value })} className={inputClass} />
         </div>
       </div>
-      <input type="number" placeholder="Position" value={data.position} onChange={(e) => setData({ ...data, position: e.target.value })} className={inputClass} />
     </div>
   );
 
