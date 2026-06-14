@@ -1,11 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Search, Plus, X, ChevronLeft, ChevronRight, Check, AlertCircle } from "lucide-react";
 import {
-  Search,
-  Plus,
-
-} from "lucide-react";
-import {
   getAllCountries,
   addCountry,
   updateCountry,
@@ -276,20 +271,6 @@ export default function CountriesTab() {
     }
     if (form.bestFor.length === 0) {
       setError("Please add at least one 'Best For' category");
-      return;
-    }
-
-    setError("");
-
-    const hasEmptyField = requiredFields.some((field) => !form[field]);
-
-    if (hasEmptyField) {
-      setError("Please fill all fields.");
-      return;
-    }
-
-    if (!form.coordinates.lat || !form.coordinates.lng) {
-      setError("Please enter coordinates.");
       return;
     }
 
@@ -600,7 +581,7 @@ export default function CountriesTab() {
               </div>
             )}
 
-            {/* ✅ FIX 2: الـ form مفيهوش onSubmit خالص — كل الأزرار type="button" */}
+            {/*  FIX 2: الـ form مفيهوش onSubmit خالص — كل الأزرار type="button" */}
             <div>
               <div className="min-h-[400px]">
                 {renderStepContent()}
@@ -658,7 +639,7 @@ export default function CountriesTab() {
               >
                 Edit
               </button>
-              {/* ✅ FIX 1: بنبعت c.country_id بدل c._id */}
+              {/*  FIX 1: بنبعت c.country_id بدل c._id */}
               <button
                 onClick={() => handleDelete(c.country_id)}
                 className="px-4 py-1.5 rounded-xl text-sm font-medium bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 transition-all"
