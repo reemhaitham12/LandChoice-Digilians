@@ -126,17 +126,57 @@ export default function AdsTab({ ads = [], onToggle, onDelete }) {
       </div>
 
       {ads.length === 0 ? <p className="text-gray-400">No ads found</p> : ads.map((ad) => (
-        <div key={ad._id} className="p-4 bg-white/5 rounded-xl mb-3 flex justify-between items-center">
-          <div>
-            <p className="font-semibold text-white">{ad.title}</p>
-            <p className="text-sm text-gray-400">{ad.companyName}</p>
+        <div
+          key={ad._id}
+          className="
+    p-5 bg-white/5 border border-white/10 rounded-2xl mb-4
+    flex flex-col gap-4
+    md:flex-row md:justify-between md:items-center
+  "
+        >
+          {/* Content */}
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-white mb-2">
+              {ad.title}
+            </h3>
+
+            <p className="text-sm text-gray-400 leading-6">
+              {ad.description || "No description available"}
+            </p>
           </div>
-          <div className="flex gap-2">
-            <button onClick={() => onToggle(ad._id)} className={`px-6 py-1.5 rounded-xl text-sm font-medium border transition ${ad.isActive ? "bg-green-500/20 text-green-300 border-green-500/30" : "bg-gray-500/20 text-gray-300 border-gray-500/30"}`}>
+
+          {/* Buttons */}
+          <div
+            className="
+      flex flex-col gap-2
+      sm:flex-row
+      md:w-auto
+    "
+          >
+            <button
+              onClick={() => onToggle(ad._id)}
+              className={`px-4 py-2 rounded-xl text-sm font-medium border transition
+      ${ad.isActive
+                  ? "bg-green-500/20 text-green-300 border-green-500/30 hover:bg-green-500/30"
+                  : "bg-gray-500/20 text-gray-300 border-gray-500/30 hover:bg-gray-500/30"
+                }`}
+            >
               {ad.isActive ? "Active" : "Inactive"}
             </button>
-            <button onClick={() => handleEditClick(ad)} className="px-6 py-1.5 rounded-xl text-sm font-medium bg-yellow-500/20 text-yellow-300 border border-yellow-500/30">Edit</button>
-            <button onClick={() => onDelete(ad._id)} className="px-6 py-1.5 rounded-xl text-sm font-medium bg-red-500/20 text-red-300 border border-red-500/30">Delete</button>
+
+            <button
+              onClick={() => handleEditClick(ad)}
+              className="px-4 py-2 rounded-xl text-sm font-medium bg-yellow-500/20 text-yellow-300 border border-yellow-500/30 hover:bg-yellow-500/30 transition"
+            >
+              Edit
+            </button>
+
+            <button
+              onClick={() => onDelete(ad._id)}
+              className="px-4 py-2 rounded-xl text-sm font-medium bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 transition"
+            >
+              Delete
+            </button>
           </div>
         </div>
       ))}
