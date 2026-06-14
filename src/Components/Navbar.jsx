@@ -61,7 +61,7 @@ export default function Navbar() {
   ];
 
   const linkClass = (isActive) =>
-    `flex items-center gap-2 px-3 lg:px-4 py-2 rounded-full text-sm transition-all duration-300 ${isActive
+    `flex items-center gap-2 px-2 lg:px-3 py-2 rounded-full text-sm transition-all duration-300 ${isActive
       ? "bg-blue-500/20 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.25)]"
       : "text-slate-400 hover:text-white hover:bg-white/5"
     }`;
