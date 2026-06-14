@@ -16,7 +16,7 @@ export default function CountriesTab() {
   const [error, setError] = useState("");
   const [stepError, setStepError] = useState("");
   const [success, setSuccess] = useState("");
-
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const steps = ["Basic Info", "Financial & Duration", "Ratings & Location", "Details & Arrays"];
 
@@ -544,8 +544,8 @@ export default function CountriesTab() {
                         ${index === currentStep
                           ? "bg-blue-500 text-white ring-4 ring-blue-500/30"
                           : index < currentStep
-                          ? "bg-green-500 text-white"
-                          : "bg-slate-700 text-slate-400"
+                            ? "bg-green-500 text-white"
+                            : "bg-slate-700 text-slate-400"
                         }`}
                       onClick={() => {
                         if (index < currentStep) {
@@ -627,11 +627,15 @@ export default function CountriesTab() {
         <p className="text-gray-400">No countries found</p>
       ) : (
         filteredCountries.map((c) => (
-          <div key={c._id} className="p-4 mb-3 bg-white/5 rounded-xl flex justify-between items-center">
+          <div
+            key={c._id}
+            className="p-4 mb-3 bg-white/5 rounded-xl flex justify-between items-center"
+          >
             <div>
               <p className="font-bold text-white">{c.country}</p>
               <p className="text-sm text-gray-400">{c.visaName}</p>
             </div>
+
             <div className="flex gap-2">
               <button
                 onClick={() => handleEdit(c)}
@@ -639,9 +643,9 @@ export default function CountriesTab() {
               >
                 Edit
               </button>
-              {/*  FIX 1: بنبعت c.country_id بدل c._id */}
+
               <button
-                onClick={() => handleDelete(c.country_id)}
+                onClick={() => setConfirmDelete(c)}
                 className="px-4 py-1.5 rounded-xl text-sm font-medium bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 transition-all"
               >
                 Delete
@@ -649,6 +653,59 @@ export default function CountriesTab() {
             </div>
           </div>
         ))
+      )}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* الخلفية */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setConfirmDelete(null)}
+          />
+
+          {/* Modal */}
+          <div className="relative w-full max-w-md rounded-2xl bg-slate-900 border border-white/10 p-6">
+            <h3 className="text-lg font-semibold text-white mb-3">
+              Delete Country
+            </h3>
+
+            <p className="text-slate-400 mb-6">
+              Are you sure you want to delete{" "}
+              <span className="text-white font-medium">
+                {confirmDelete.country}
+              </span>
+              ?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={async () => {
+                  try {
+                    await deleteCountry(confirmDelete.country_id);
+                    setSuccess("Country deleted successfully!");
+                    fetchCountries();
+                  } catch (err) {
+                    setError(
+                      err.response?.data?.error ||
+                      "Failed to delete country"
+                    );
+                  } finally {
+                    setConfirmDelete(null);
+                  }
+                }}
+                className="px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-500"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
