@@ -167,7 +167,7 @@ export default function AdminDashboard() {
             <p>Loading ads...</p>
           ) : (
             <AdsTab
-              ads={ads}
+              ads={ads} setAds={setAds}
               onAdd={handleAdd}
               onEdit={handleEdit}
               onDelete={handleDelete}
