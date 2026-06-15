@@ -13,10 +13,60 @@ export default function AboutPage() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); 
+  const [submitStatus, setSubmitStatus] = useState(null);
+  
+  // State for validation errors
+  const [errors, setErrors] = useState({});
+
+  // Validation function
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Validate name
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    } else if (formData.name.trim().length < 2) {
+      newErrors.name = 'Name must be at least 2 characters';
+    } else if (formData.name.trim().length > 50) {
+      newErrors.name = 'Name must be less than 50 characters';
+    }
+
+    // Validate email
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else {
+      const emailRegex = /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = 'Please enter a valid email address (e.g., name@example.com)';
+      }
+    }
+
+    // Validate message
+    if (!formData.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters';
+    } else if (formData.message.trim().length > 1000) {
+      newErrors.message = 'Message must be less than 1000 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Run validation before submitting
+    if (!validateForm()) {
+      // Scroll to first error
+      const firstError = document.querySelector('.error-border');
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    
     setIsSubmitting(true);
     setSubmitStatus(null);
 
@@ -45,6 +95,7 @@ export default function AboutPage() {
           category: 'Visa Assistance Services',
           message: ''
         });
+        setErrors({}); // Clear errors on success
       } else {
         setSubmitStatus('error');
       }
@@ -53,6 +104,15 @@ export default function AboutPage() {
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Clear specific error when user starts typing
+  const handleInputChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+    // Clear error for this field when user types
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: '' });
     }
   };
 
@@ -161,28 +221,38 @@ export default function AboutPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5">Your Name</label>
+                  <label className="block text-xs text-gray-400 mb-1.5">Your Name <span className="text-red-400">*</span></label>
                   <input
                     type="text"
                     placeholder="e.g. John Doe"
-                    className="w-full bg-[#1E293B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition"
+                    className={`w-full bg-[#1E293B] border rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition ${
+                      errors.name ? 'border-red-500 focus:border-red-500 error-border' : 'border-white/10'
+                    }`}
                     value={formData.name}
-                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    onChange={e => handleInputChange('name', e.target.value)}
                     required
                     disabled={isSubmitting}
                   />
+                  {errors.name && (
+                    <p className="text-red-400 text-xs mt-1">{errors.name}</p>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1.5">Your Email</label>
+                  <label className="block text-xs text-gray-400 mb-1.5">Your Email <span className="text-red-400">*</span></label>
                   <input
                     type="email"
                     placeholder="e.g. john@example.com"
-                    className="w-full bg-[#1E293B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition"
+                    className={`w-full bg-[#1E293B] border rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition ${
+                      errors.email ? 'border-red-500 focus:border-red-500 error-border' : 'border-white/10'
+                    }`}
                     value={formData.email}
-                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                    onChange={e => handleInputChange('email', e.target.value)}
                     required
                     disabled={isSubmitting}
                   />
+                  {errors.email && (
+                    <p className="text-red-400 text-xs mt-1">{errors.email}</p>
+                  )}
                 </div>
               </div>
 
@@ -216,16 +286,24 @@ export default function AboutPage() {
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1.5">Message & Ad Requirements</label>
+                <label className="block text-xs text-gray-400 mb-1.5">Message & Ad Requirements <span className="text-red-400">*</span></label>
                 <textarea
                   rows={4}
-                  placeholder="Describe what services you would like to advertise, duration, and budget requirements..."
-                  className="w-full bg-[#1E293B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition resize-none"
+                  placeholder="Describe what services you would like to advertise, duration, and budget requirements... (minimum 10 characters)"
+                  className={`w-full bg-[#1E293B] border rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition resize-none ${
+                    errors.message ? 'border-red-500 focus:border-red-500 error-border' : 'border-white/10'
+                  }`}
                   value={formData.message}
-                  onChange={e => setFormData({ ...formData, message: e.target.value })}
+                  onChange={e => handleInputChange('message', e.target.value)}
                   required
                   disabled={isSubmitting}
                 />
+                {errors.message && (
+                  <p className="text-red-400 text-xs mt-1">{errors.message}</p>
+                )}
+                {formData.message.length > 0 && formData.message.length < 10 && !errors.message && (
+                  <p className="text-yellow-500 text-xs mt-1">Tip: Please provide at least 10 characters for better details</p>
+                )}
               </div>
 
               <button
