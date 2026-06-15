@@ -23,18 +23,25 @@ const getError = (err) =>
 
 export const normalizeId = (id) => {
   if (!id) return null;
+  if (typeof id === 'string' && id.includes('@')) return id.toLowerCase().trim();
   if (typeof id === 'string') return id.toLowerCase().trim();
   if (typeof id === 'object') {
     const extracted = id._id || id.id;
     return extracted ? normalizeId(extracted) : null;
   }
-  return id.toString().toLowerCase().trim();
+  if (typeof id === 'number') return id.toString();
+  return null;
 };
 
 export const idsMatch = (id1, id2) => {
   const n1 = normalizeId(id1);
   const n2 = normalizeId(id2);
-  return !!(n1 && n2 && n1 === n2);
+  if (!n1 || !n2) return false;
+  if (n1 === n2) return true;
+  const storedUser = JSON.parse(localStorage.getItem('landchoice_user') || '{}');
+  const currentUserId = normalizeId(storedUser.user_id || storedUser.id || storedUser._id);
+  if ((n1.includes('@') && n2 === currentUserId) || (n2.includes('@') && n1 === currentUserId)) return true;
+  return false;
 };
 
 // ─── NORMALISATION ─────────────────────────────────────────────────────────
@@ -80,7 +87,6 @@ const normalisePost = (p) => {
   };
 };
 
-// ✅ FIX #4: Corrected ID field mapping - MongoDB typically uses _id
 const normaliseComment = (c) => {
   let authorId = null, authorName = 'Anonymous', authorEmail = '', authorAvatar = null;
 
@@ -100,15 +106,8 @@ const normaliseComment = (c) => {
     authorAvatar = c.author.avatar || null;
   }
 
-  // ✅ FIX #4: Ensure ID field exists - check _id first (MongoDB convention)
-  const commentId = c._id || c.id;
-  
-  if (!commentId) {
-    console.warn('⚠️ Comment missing both _id and id fields:', c);
-  }
-
   return {
-    id: commentId,
+    id: c._id || c.id,
     content: c.text || c.content || '',
     author: { id: authorId, name: authorName, email: authorEmail, avatar: authorAvatar },
     createdAt: c.createdAt || new Date().toISOString(),
@@ -118,16 +117,15 @@ const normaliseComment = (c) => {
 
 // ─── POSTS ─────────────────────────────────────────────────────────────────
 
-export const fetchPosts = async (page = 1, limit = 10) => {
+export const fetchPosts = async () => {
   try {
     const { data } = await api.get('/posts');
     const all = (data.posts || []).map(normalisePost);
+    // ✅ إزالة التكرار بالـ ID فقط، من غير pagination
     const unique = all.filter((post, index, self) =>
       index === self.findIndex(p => idsMatch(p.id, post.id))
     );
-    const start = (page - 1) * limit;
-    const slice = unique.slice(start, start + limit);
-    return { posts: slice, total: unique.length, page, hasMore: start + limit < unique.length };
+    return { posts: unique, total: unique.length, hasMore: false };
   } catch (err) {
     throw new Error(getError(err));
   }
@@ -190,15 +188,7 @@ export const toggleLike = async (postId, currentlyLiked) => {
 export const fetchComments = async (postId) => {
   try {
     const { data } = await api.get('/posts/get-post-by-id', { params: { id: postId } });
-    const comments = (data.post?.comments || []).map(normaliseComment);
-    
-    // ✅ FIX #4: Log any comments with missing IDs for debugging
-    const missingIds = comments.filter(c => !c.id);
-    if (missingIds.length > 0) {
-      console.warn(`⚠️ ${missingIds.length} comment(s) have missing ID fields`);
-    }
-    
-    return comments;
+    return (data.post?.comments || []).map(normaliseComment);
   } catch { return []; }
 };
 
@@ -221,7 +211,6 @@ export const addComment = async (postId, content) => {
   }
 };
 
-// Server expects: DELETE /posts/delete-comment?id=<postId>&commentId=<commentId>
 export const deleteComment = async (postId, commentId) => {
   try {
     if (!postId || !commentId) throw new Error('Post ID and Comment ID are required');
@@ -234,7 +223,6 @@ export const deleteComment = async (postId, commentId) => {
   }
 };
 
-// No edit-comment endpoint in API — optimistic local update
 export const editComment = async (postId, commentId, content) => {
   if (!postId || !commentId) throw new Error('Post ID and Comment ID are required');
   if (!content?.trim()) throw new Error('Comment content is required');
@@ -246,7 +234,7 @@ export const editComment = async (postId, commentId, content) => {
 export const fetchUserProfile = async (userId) => {
   try {
     const { data } = await api.get('/posts/user-posts', { params: { userId } });
-    const posts = (data.posts || []).map(p => normalisePost(p));
+    const posts = (data.posts || []).map(normalisePost);
     return {
       id: userId,
       posts,
@@ -358,7 +346,6 @@ export const deleteAd = async (adId) => {
   } catch (err) { throw new Error(getError(err)); }
 };
 
-// Silent tracking ping — does NOT open a new tab
 export const trackAdClick = (adId) => {
   fetch(`${BASE}/ads/click?id=${adId}`).catch(() => {});
 };

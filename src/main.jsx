@@ -8,7 +8,6 @@ import CommunityProvider from "./context/CommunityContext";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
     <AuthProvider>
       <VisaProvider>
         
@@ -16,5 +15,4 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         
       </VisaProvider>
     </AuthProvider>
-  </React.StrictMode>
 );
