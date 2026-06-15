@@ -10,7 +10,7 @@ export default function CountryHero({ country, navigate: navProp }) {
 
   // ── "Add to Compare" ── navigates to /compare with this country pre-selected
   const handleCompare = () => {
-    navigate(`/compare?country=${encodeURIComponent(country.country_id || country._id || country.id)}`);
+    navigate(`/compare?add=${encodeURIComponent(country.country_id || country._id || country.id)}`);
   };
 
   // ── "Check Eligibility" ── navigates to Salary Fit checker

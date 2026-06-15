@@ -69,19 +69,24 @@ export default function ResultCard({ result, index }) {
 
       {/* Progress bar */}
       <div className="mb-5">
-        <div className="flex justify-between text-xs mb-1.5">
-          <span className="text-slate-400">Income Match</span>
-          <span className="text-white font-bold">{result.percentage}%</span>
-        </div>
-        <div className="w-full h-2 bg-dark-900 rounded-full overflow-hidden">
-          <motion.div
-            className={`h-full ${barColor(result.percentage)} rounded-full`}
-            initial={{ width: 0 }}
-            animate={{ width: `${pct}%` }}
-            transition={{ duration: 0.8, ease: 'easeOut', delay: index * 0.04 + 0.2 }}
-          />
-        </div>
-      </div>
+  <div className="flex justify-between text-xs mb-1.5">
+    <span className="text-slate-400">Income Match</span>
+    <span className="text-white font-bold">{pct}%</span>
+  </div>
+
+  <div className="w-full h-2 bg-dark-900 rounded-full overflow-hidden">
+    <motion.div
+      className={`h-full ${barColor(pct)} rounded-full`}
+      initial={{ width: 0 }}
+      animate={{ width: `${pct}%` }}
+      transition={{
+        duration: 0.8,
+        ease: 'easeOut',
+        delay: index * 0.04 + 0.2
+      }}
+    />
+  </div>
+</div>
 
       {/* 4-col details */}
       <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
