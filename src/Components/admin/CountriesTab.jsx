@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from "react";
-import { Search, Plus, X, ChevronLeft, ChevronRight, Check, AlertCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Search, Plus, X, ChevronLeft, ChevronRight, Check, AlertCircle, CheckCircle } from "lucide-react";
 import {
   getAllCountries,
   addCountry,
@@ -7,18 +7,66 @@ import {
   deleteCountry,
 } from "../../Services/country/countryService";
 
+// ✅ Toast Component — يظهر في أعلى اليمين فوق كل حاجة
+const Toast = ({ message, type, onClose }) => {
+  if (!message) return null;
+  const isError = type === "error";
+  return (
+    <div
+      className={`fixed top-5 right-5 z-[9999] flex items-start gap-3 px-4 py-3 rounded-2xl shadow-2xl border backdrop-blur-sm max-w-sm w-full animate-in slide-in-from-top-2 duration-300
+        ${isError
+          ? "bg-red-500/20 border-red-500/40 text-red-300"
+          : "bg-green-500/20 border-green-500/40 text-green-300"
+        }`}
+    >
+      <div className="flex-shrink-0 mt-0.5">
+        {isError
+          ? <AlertCircle className="w-5 h-5" />
+          : <CheckCircle className="w-5 h-5" />
+        }
+      </div>
+      <span className="text-sm flex-1">{message}</span>
+      <button onClick={onClose} className="flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity">
+        <X className="w-4 h-4" />
+      </button>
+    </div>
+  );
+};
+
 export default function CountriesTab() {
   const [countries, setCountries] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState("");
-  const [stepError, setStepError] = useState("");
-  const [success, setSuccess] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [currentStep, setCurrentStep] = useState(0);
   const steps = ["Basic Info", "Financial & Duration", "Ratings & Location", "Details & Arrays"];
+
+  // ✅ Toast state موحد
+  const [toast, setToast] = useState({ message: "", type: "" });
+  const [stepError, setStepError] = useState("");
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+  };
+
+  const hideToast = () => setToast({ message: "", type: "" });
+
+  useEffect(() => {
+    if (toast.message) {
+      const duration = toast.type === "error" ? 5000 : 3000;
+      const timer = setTimeout(hideToast, duration);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    if (stepError) {
+      const timer = setTimeout(() => setStepError(""), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [stepError]);
 
   const [touchedFields, setTouchedFields] = useState({});
 
@@ -34,24 +82,6 @@ export default function CountriesTab() {
     }));
     setTouchedFields((prev) => ({ ...prev, [`coordinates_${coord}`]: true }));
   };
-
-  useEffect(() => {
-    if (stepError) {
-      const timer = setTimeout(() => setStepError(""), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [stepError]);
-
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => setError(""), 4000);
-      return () => clearTimeout(timer);
-    }
-    if (success) {
-      const timer = setTimeout(() => setSuccess(""), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [error, success]);
 
   const initialFormState = {
     country_id: "",
@@ -85,7 +115,6 @@ export default function CountriesTab() {
   };
 
   const [form, setForm] = useState(initialFormState);
-
   const [tempRequirement, setTempRequirement] = useState("");
   const [tempBenefit, setTempBenefit] = useState("");
   const [tempRestriction, setTempRestriction] = useState("");
@@ -135,8 +164,7 @@ export default function CountriesTab() {
       setStepError("");
     } else {
       const missing = getMissingFields();
-      setStepError(`❌ Please complete all required fields before continuing: ${missing.join(", ")}`);
-      document.querySelector(".form-content")?.scrollTo({ top: 0, behavior: "smooth" });
+      setStepError(`Please complete: ${missing.join(", ")}`);
     }
   };
 
@@ -152,7 +180,7 @@ export default function CountriesTab() {
       setCountries(data.countries || data || []);
     } catch (err) {
       console.log(err);
-      setError("Failed to fetch countries");
+      showToast("Failed to fetch countries", "error");
     } finally {
       setLoading(false);
     }
@@ -174,7 +202,7 @@ export default function CountriesTab() {
     setTempBestFor("");
     setTouchedFields({});
     setStepError("");
-    setError("");
+    hideToast();
     setIsEditing(false);
     setShowAddForm(true);
     setCurrentStep(0);
@@ -237,44 +265,29 @@ export default function CountriesTab() {
     setTempRestriction("");
     setTempBestFor("");
     setStepError("");
+    hideToast();
     setIsEditing(true);
     setShowAddForm(true);
     setCurrentStep(0);
   };
 
-  // ✅ FIX 1: استخدام c.country_id بدل c._id عشان الـ API بيتوقع country_id
-  const handleDelete = async (countryId) => {
-    if (window.confirm("Are you sure you want to delete this country?")) {
-      try {
-        await deleteCountry(countryId);
-        setSuccess("Country deleted successfully!");
-        fetchCountries();
-      } catch (err) {
-        setError(err.response?.data?.error || "Failed to delete country");
-      }
-    }
-  };
-
-  // ✅ FIX 2: الـ handleSave بقى مستقل عن الـ form onSubmit خالص
   const handleSave = async () => {
     if (form.requirements.length === 0) {
-      setError("Please add at least one requirement");
+      showToast("Please add at least one requirement", "error");
       return;
     }
     if (form.benefits.length === 0) {
-      setError("Please add at least one benefit");
+      showToast("Please add at least one benefit", "error");
       return;
     }
     if (form.restrictions.length === 0) {
-      setError("Please add at least one restriction");
+      showToast("Please add at least one restriction", "error");
       return;
     }
     if (form.bestFor.length === 0) {
-      setError("Please add at least one 'Best For' category");
+      showToast("Please add at least one 'Best For' category", "error");
       return;
     }
-
-    setError("");
 
     try {
       const submitData = {
@@ -297,17 +310,18 @@ export default function CountriesTab() {
 
       if (isEditing) {
         await updateCountry(form.country_id, submitData);
-        setSuccess("Country updated successfully!");
+        showToast("Country updated successfully!", "success");
       } else {
         await addCountry(submitData);
-        setSuccess("Country added successfully!");
+        showToast("Country added successfully!", "success");
       }
 
       setShowAddForm(false);
       setIsEditing(false);
       fetchCountries();
     } catch (err) {
-      setError(err.response?.data?.error || "Something went wrong");
+      // ✅ بيظهر كـ toast في أعلى اليمين والـ modal مش بيتقفل
+      showToast(err.response?.data?.error || err.response?.data?.message || "Something went wrong", "error");
     }
   };
 
@@ -425,7 +439,7 @@ export default function CountriesTab() {
                 <label className="text-sm text-slate-400">{label}</label>
                 <div className="flex gap-2">
                   <input
-                    placeholder={`Add a ${label.toLowerCase().replace(" (at least one)", "")}`}
+                    placeholder={`Add a ${label.toLowerCase()}`}
                     value={temp}
                     onChange={(e) => setTemp(e.target.value)}
                     onKeyDown={(e) => {
@@ -491,6 +505,9 @@ export default function CountriesTab() {
 
   return (
     <div className="p-4">
+      {/* ✅ Toast — يظهر في أعلى اليمين فوق كل حاجة حتى فوق الـ modal */}
+      <Toast message={toast.message} type={toast.type} onClose={hideToast} />
+
       <div className="mb-6 flex items-center justify-between gap-4">
         <div className="relative w-full">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 w-5 h-5" />
@@ -510,18 +527,6 @@ export default function CountriesTab() {
         </button>
       </div>
 
-      {error && (
-        <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 flex items-start gap-2">
-          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-          <span>{error}</span>
-        </div>
-      )}
-      {success && (
-        <div className="mb-4 p-3 rounded-xl bg-green-500/10 border border-green-500/30 text-green-300">
-          {success}
-        </div>
-      )}
-
       {showAddForm && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto form-content">
@@ -529,7 +534,13 @@ export default function CountriesTab() {
               <h2 className="text-2xl font-bold text-white">
                 {isEditing ? "Edit Country" : "Add New Country"}
               </h2>
-              <button onClick={() => setShowAddForm(false)} className="text-slate-400 hover:text-white">
+              <button
+                onClick={() => {
+                  setShowAddForm(false);
+                  setStepError("");
+                }}
+                className="text-slate-400 hover:text-white"
+              >
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -574,14 +585,14 @@ export default function CountriesTab() {
               </div>
             </div>
 
+            {/* stepError جوا الـ modal بس للـ validation */}
             {stepError && (
-              <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 flex items-start gap-2 animate-pulse">
+              <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 flex items-start gap-2">
                 <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                <span>{stepError}</span>
+                <span className="text-sm">{stepError}</span>
               </div>
             )}
 
-            {/*  FIX 2: الـ form مفيهوش onSubmit خالص — كل الأزرار type="button" */}
             <div>
               <div className="min-h-[400px]">
                 {renderStepContent()}
@@ -635,7 +646,6 @@ export default function CountriesTab() {
               <p className="font-bold text-white">{c.country}</p>
               <p className="text-sm text-gray-400">{c.visaName}</p>
             </div>
-
             <div className="flex gap-2">
               <button
                 onClick={() => handleEdit(c)}
@@ -643,7 +653,6 @@ export default function CountriesTab() {
               >
                 Edit
               </button>
-
               <button
                 onClick={() => setConfirmDelete(c)}
                 className="px-4 py-1.5 rounded-xl text-sm font-medium bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 transition-all"
@@ -654,28 +663,19 @@ export default function CountriesTab() {
           </div>
         ))
       )}
+
       {confirmDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* الخلفية */}
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setConfirmDelete(null)}
           />
-
-          {/* Modal */}
           <div className="relative w-full max-w-md rounded-2xl bg-slate-900 border border-white/10 p-6">
-            <h3 className="text-lg font-semibold text-white mb-3">
-              Delete Country
-            </h3>
-
+            <h3 className="text-lg font-semibold text-white mb-3">Delete Country</h3>
             <p className="text-slate-400 mb-6">
               Are you sure you want to delete{" "}
-              <span className="text-white font-medium">
-                {confirmDelete.country}
-              </span>
-              ?
+              <span className="text-white font-medium">{confirmDelete.country}</span>?
             </p>
-
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setConfirmDelete(null)}
@@ -683,18 +683,14 @@ export default function CountriesTab() {
               >
                 Cancel
               </button>
-
               <button
                 onClick={async () => {
                   try {
                     await deleteCountry(confirmDelete.country_id);
-                    setSuccess("Country deleted successfully!");
+                    showToast("Country deleted successfully!", "success");
                     fetchCountries();
                   } catch (err) {
-                    setError(
-                      err.response?.data?.error ||
-                      "Failed to delete country"
-                    );
+                    showToast(err.response?.data?.error || "Failed to delete country", "error");
                   } finally {
                     setConfirmDelete(null);
                   }
