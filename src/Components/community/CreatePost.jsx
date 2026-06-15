@@ -1,3 +1,7 @@
+// ============================================================
+// FILE 2: CreatePost.jsx
+// ============================================================
+
 import { useState } from "react";
 import { FaPaperPlane, FaExclamationTriangle } from "react-icons/fa";
 import { createPost } from "../../Services/communityService";
@@ -18,12 +22,9 @@ export default function CreatePost({ onPost }) {
 
   if (!user) {
     return (
-      <div className="glass-card rounded-2xl p-6 text-center border border-blue-500/20">
+      <div className="rounded-2xl p-6 text-center bg-slate-800/30 border border-white/5">
         <p className="text-slate-400 text-sm">
-          <a
-            href="/login"
-            className="text-blue-400 hover:underline font-semibold transition-colors"
-          >
+          <a href="/login" className="text-blue-400 hover:underline font-semibold">
             Sign in
           </a>{" "}
           to share your experience
@@ -58,59 +59,36 @@ export default function CreatePost({ onPost }) {
 
     try {
       const post = await createPost(title.trim(), content.trim());
-
       showToast.success("Post created successfully!");
-
       onPost?.(post);
-
       setTitle("");
       setContent("");
       setFocused(false);
       setErrors({});
     } catch (err) {
       console.error("Create post failed:", err);
-
-      const errorMsg =
-        err.response?.data?.message ||
-        err.message ||
-        "Failed to create post";
-
+      const errorMsg = err.response?.data?.message || err.message || "Failed to create post";
       showToast.error(errorMsg);
-
-      setErrors({
-        submit: errorMsg,
-      });
+      setErrors({ submit: errorMsg });
     } finally {
       setSubmitting(false);
     }
   };
 
-  const authorInitial = (
-    user?.fullName ||
-    user?.name ||
-    user?.email ||
-    "?"
-  )[0].toUpperCase();
+  const authorInitial = (user?.fullName || user?.name || user?.email || "?")[0].toUpperCase();
 
   const titleLength = title.length;
   const contentLength = content.length;
-
   const hasErrors = Object.values(errors).some(Boolean);
 
   return (
-    <div
-      className={`glass-card rounded-2xl p-6 transition-all duration-300 border ${
-        focused
-          ? "border-blue-500/40 shadow-lg shadow-blue-500/10"
-          : "border-white/10"
-      }`}
-    >
-      <div className="flex gap-4">
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 shadow-md">
+    <div className={`rounded-2xl p-5 transition-all duration-300 border bg-slate-800/30 ${focused ? "border-blue-500/40" : "border-white/5"}`}>
+      <div className="flex gap-3">
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-amber-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
           {authorInitial}
         </div>
 
-        <div className="flex-1 space-y-4">
+        <div className="flex-1 space-y-3">
           {/* Title Input */}
           <div>
             <input
@@ -118,36 +96,18 @@ export default function CreatePost({ onPost }) {
               value={title}
               onChange={(e) => {
                 setTitle(e.target.value);
-                setErrors((prev) => ({
-                  ...prev,
-                  title: "",
-                }));
+                setErrors((prev) => ({ ...prev, title: "" }));
               }}
               onFocus={() => setFocused(true)}
               placeholder="Post title…"
               maxLength={MAX_TITLE}
-              className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition-all ${
-                errors.title
-                  ? "border-red-500/50 focus:border-red-500/70"
-                  : "border-white/10 focus:border-blue-500/50"
+              className={`w-full bg-white/5 border rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none transition-all ${
+                errors.title ? "border-red-500/50" : "border-white/10 focus:border-blue-500/50"
               }`}
             />
-
-            <div className="flex justify-between items-center mt-2">
-              {errors.title && (
-                <span className="text-red-400 text-xs flex items-center gap-1">
-                  <FaExclamationTriangle size={12} />
-                  {errors.title}
-                </span>
-              )}
-
-              <span
-                className={`text-xs ml-auto ${
-                  titleLength > MAX_TITLE * 0.9
-                    ? "text-amber-400"
-                    : "text-slate-500"
-                }`}
-              >
+            <div className="flex justify-between items-center mt-1">
+              {errors.title && <span className="text-red-400 text-xs">{errors.title}</span>}
+              <span className={`text-xs ml-auto ${titleLength > MAX_TITLE * 0.9 ? "text-amber-400" : "text-slate-500"}`}>
                 {titleLength}/{MAX_TITLE}
               </span>
             </div>
@@ -159,37 +119,19 @@ export default function CreatePost({ onPost }) {
               value={content}
               onChange={(e) => {
                 setContent(e.target.value);
-                setErrors((prev) => ({
-                  ...prev,
-                  content: "",
-                }));
+                setErrors((prev) => ({ ...prev, content: "" }));
               }}
               onFocus={() => setFocused(true)}
               placeholder="Share your experience, ask a question, or start a discussion…"
               rows={focused || content ? 4 : 2}
               maxLength={MAX_CONTENT}
-              className={`w-full bg-white/5 border rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none resize-none transition-all ${
-                errors.content
-                  ? "border-red-500/50 focus:border-red-500/70"
-                  : "border-white/10 focus:border-blue-500/50"
+              className={`w-full bg-white/5 border rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 outline-none resize-none transition-all ${
+                errors.content ? "border-red-500/50" : "border-white/10 focus:border-blue-500/50"
               }`}
             />
-
-            <div className="flex justify-between items-center mt-2">
-              {errors.content && (
-                <span className="text-red-400 text-xs flex items-center gap-1">
-                  <FaExclamationTriangle size={12} />
-                  {errors.content}
-                </span>
-              )}
-
-              <span
-                className={`text-xs ml-auto ${
-                  contentLength > MAX_CONTENT * 0.9
-                    ? "text-amber-400"
-                    : "text-slate-500"
-                }`}
-              >
+            <div className="flex justify-between items-center mt-1">
+              {errors.content && <span className="text-red-400 text-xs">{errors.content}</span>}
+              <span className={`text-xs ml-auto ${contentLength > MAX_CONTENT * 0.9 ? "text-amber-400" : "text-slate-500"}`}>
                 {contentLength}/{MAX_CONTENT}
               </span>
             </div>
@@ -197,27 +139,19 @@ export default function CreatePost({ onPost }) {
 
           {/* Submit Error */}
           {errors.submit && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 flex gap-3">
-              <FaExclamationTriangle
-                className="text-red-400 flex-shrink-0 mt-0.5"
-                size={16}
-              />
-              <p className="text-red-300 text-sm">{errors.submit}</p>
+            <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 flex gap-2">
+              <FaExclamationTriangle className="text-red-400 flex-shrink-0 mt-0.5" size={14} />
+              <p className="text-red-300 text-xs">{errors.submit}</p>
             </div>
           )}
 
           {/* Submit Button */}
           {(focused || content) && (
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-end pt-1">
               <button
                 onClick={handleSubmit}
-                disabled={
-                  !title.trim() ||
-                  !content.trim() ||
-                  submitting ||
-                  hasErrors
-                }
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#6C8FD9] to-[#f29706] text-white text-sm font-semibold hover:opacity-90 hover:shadow-lg hover:shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none transition-all"
+                disabled={!title.trim() || !content.trim() || submitting || hasErrors}
+                className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all"
               >
                 {submitting ? (
                   <>
@@ -226,7 +160,7 @@ export default function CreatePost({ onPost }) {
                   </>
                 ) : (
                   <>
-                    <FaPaperPlane size={14} />
+                    <FaPaperPlane size={12} />
                     <span>Post</span>
                   </>
                 )}
