@@ -18,17 +18,34 @@ export default function AboutPage() {
   // State for validation errors
   const [errors, setErrors] = useState({});
 
+  // Auto-hide success/error message after 5 seconds
+  useEffect(() => {
+    if (submitStatus === 'success' || submitStatus === 'error') {
+      const timer = setTimeout(() => {
+        setSubmitStatus(null);
+      }, 5000); // 5 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [submitStatus]);
+
   // Validation function
   const validateForm = () => {
     const newErrors = {};
 
-    // Validate name
+    // Validate name - letters only (Arabic or English) and spaces
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
     } else if (formData.name.trim().length < 2) {
       newErrors.name = 'Name must be at least 2 characters';
     } else if (formData.name.trim().length > 50) {
       newErrors.name = 'Name must be less than 50 characters';
+    } else {
+      // Allow Arabic letters, English letters, spaces, and dots
+      const nameRegex = /^[a-zA-Z\u0600-\u06FF\s.]+$/;
+      if (!nameRegex.test(formData.name.trim())) {
+        newErrors.name = 'Name must contain only letters (Arabic or English) and spaces';
+      }
     }
 
     // Validate email
@@ -107,6 +124,18 @@ export default function AboutPage() {
     }
   };
 
+  // Handle name input - prevent numbers and special characters
+  const handleNameChange = (value) => {
+    // Allow only letters (Arabic/English), spaces, and dots
+    const filteredValue = value.replace(/[^a-zA-Z\u0600-\u06FF\s.]/g, '');
+    setFormData({ ...formData, name: filteredValue });
+    
+    // Clear error for name field when user types
+    if (errors.name) {
+      setErrors({ ...errors, name: '' });
+    }
+  };
+
   // Clear specific error when user starts typing
   const handleInputChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -115,14 +144,6 @@ export default function AboutPage() {
       setErrors({ ...errors, [field]: '' });
     }
   };
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     // setLoading(false);
-  // //   }, 1500);
-
-  //   return () => clearTimeout(timer);
-  // }, []);
 
   return (
     <div className="min-h-screen text-white font-sans">
@@ -208,13 +229,13 @@ export default function AboutPage() {
 
             {/* Success/Error Messages */}
             {submitStatus === 'success' && (
-              <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm">
-                Your request has been sent successfully! Our team will review it and get back to you shortly.
+              <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm animate-in fade-in duration-300">
+                ✓ Your request has been sent successfully! Our team will review it and get back to you shortly.
               </div>
             )}
             {submitStatus === 'error' && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-                 Failed to send request. Please try again.
+              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm animate-in fade-in duration-300">
+                ✗ Failed to send request. Please try again.
               </div>
             )}
 
@@ -224,17 +245,20 @@ export default function AboutPage() {
                   <label className="block text-xs text-gray-400 mb-1.5">Your Name <span className="text-red-400">*</span></label>
                   <input
                     type="text"
-                    placeholder="e.g. John Doe"
+                    placeholder="e.g. John Doe or أحمد محمد"
                     className={`w-full bg-[#1E293B] border rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-blue-500/50 transition ${
                       errors.name ? 'border-red-500 focus:border-red-500 error-border' : 'border-white/10'
                     }`}
                     value={formData.name}
-                    onChange={e => handleInputChange('name', e.target.value)}
+                    onChange={e => handleNameChange(e.target.value)}
                     required
                     disabled={isSubmitting}
                   />
                   {errors.name && (
                     <p className="text-red-400 text-xs mt-1">{errors.name}</p>
+                  )}
+                  {!errors.name && formData.name.length > 0 && (
+                    <p className="text-gray-500 text-xs mt-1">✓ Only letters (Arabic or English) and spaces allowed</p>
                   )}
                 </div>
                 <div>
