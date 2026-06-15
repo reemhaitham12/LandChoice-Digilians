@@ -21,7 +21,6 @@ import {
 
 import { useVisa } from "../context/visaContext";
 import { useAuth } from "../context/AuthContext";
-import Loading from "../Components/Loading";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -85,8 +84,6 @@ export default function Home() {
         visibleCountries.length > 0
             ? Math.min(...visibleCountries.map((country) => country.minIncomeMonthly))
             : 0;
-
-    if (loading) return <Loading />;
 
     return (
         <div className="min-h-screen bg-slate-950 text-white pt-24">
