@@ -59,7 +59,7 @@ export default function CreatePost({ onPost }) {
     try {
       const post = await createPost(title.trim(), content.trim());
 
-      showToast.success("Post created successfully! ✨");
+      showToast.success("Post created successfully!");
 
       onPost?.(post);
 
@@ -68,7 +68,7 @@ export default function CreatePost({ onPost }) {
       setFocused(false);
       setErrors({});
     } catch (err) {
-      console.error("❌ Create post failed:", err);
+      console.error("Create post failed:", err);
 
       const errorMsg =
         err.response?.data?.message ||
