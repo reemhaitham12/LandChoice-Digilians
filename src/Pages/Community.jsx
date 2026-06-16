@@ -6,9 +6,8 @@ import CommunityProvider from '../context/CommunityContext';
 import PostCard from '../Components/community/PostCard';
 import CreatePost from '../Components/community/CreatePost';
 
-// ============================================================
 // SIMPLE TAB COMPONENT
-// ============================================================
+
 function CommunityTabs({ activeTab, onTabChange }) {
   return (
     <div className="flex gap-6 border-b border-white/10 pb-3 mb-6">
@@ -42,9 +41,8 @@ function CommunityTabs({ activeTab, onTabChange }) {
   );
 }
 
-// ============================================================
 // HEADER
-// ============================================================
+
 function CommunityHeader() {
   return (
     <div className="text-center mb-8">
@@ -58,9 +56,8 @@ function CommunityHeader() {
   );
 }
 
-// ============================================================
 // ADS SECTION
-// ============================================================
+
 function AdsSection({ ads }) {
   if (!ads || ads.length === 0) {
     return (
@@ -114,9 +111,8 @@ function AdsSection({ ads }) {
   );
 }
 
-// ============================================================
 // GUIDELINES SECTION - Clean sidebar
-// ============================================================
+
 function GuidelinesSection() {
   const guidelines = [
     'Be respectful to all members',
@@ -143,9 +139,9 @@ function GuidelinesSection() {
   );
 }
 
-// ============================================================
+
 // MAIN COMPONENT
-// ============================================================
+
 function CommunityInner() {
   const { user } = useAuth();
   const [posts, setPosts] = useState([]);

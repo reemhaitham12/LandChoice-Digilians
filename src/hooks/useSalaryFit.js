@@ -18,7 +18,7 @@ export function useSalaryFit() {
   const [error, setError]                 = useState(null);
   const [filters, setFilters]             = useState(DEFAULT_FILTERS);
 
-  // ✅ Use shared context — no duplicate fetch
+  //  Use shared context — no duplicate fetch
   const { visaData, loading: apiLoading } = useVisa();
 
   const countries = Array.isArray(visaData)

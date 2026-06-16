@@ -51,7 +51,7 @@ export default function AdsTab() {
       description: ad.description || "",
       companyName: ad.companyName || "",
       linkUrl: ad.linkUrl || "",
-      startDate: "",  // ✅ Empty start date for edit (won't be shown or sent)
+      startDate: "",  //  Empty start date for edit (won't be shown or sent)
       endDate: ad.endDate?.slice(0, 10) || "",
     });
     setEditAd(ad._id);
@@ -59,7 +59,7 @@ export default function AdsTab() {
 
   const validateForm = (data, isUpdate = false) => {
     if (!data.title.trim()) { addToast("Title is required", "error"); return false; }
-    // ✅ For update, only validate if endDate exists
+    //  For update, only validate if endDate exists
     if (isUpdate && !data.endDate) { 
       // End date is optional in update, skip validation
     } else if (!isUpdate && (!data.startDate || !data.endDate)) { 
@@ -136,7 +136,7 @@ export default function AdsTab() {
         linkUrl: form.linkUrl,
         endDate: new Date(form.endDate).toISOString(),
       };
-      // ✅ Only include startDate if it's provided (optional in update)
+      //  Only include startDate if it's provided (optional in update)
       if (form.startDate) {
         updateData.startDate = new Date(form.startDate).toISOString();
       }
@@ -153,7 +153,7 @@ export default function AdsTab() {
 
   const inputClass = "w-full px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 transition";
 
-  // ✅ Render fields with conditional start date visibility
+  //  Render fields with conditional start date visibility
   const renderCreateFields = (data, setData) => (
     <div className="space-y-3">
       <input placeholder="Title" value={data.title} onChange={(e) => setData({ ...data, title: e.target.value })} className={inputClass} />
@@ -173,7 +173,7 @@ export default function AdsTab() {
     </div>
   );
 
-  // ✅ Render fields for edit - WITHOUT start date
+  //  Render fields for edit - WITHOUT start date
   const renderEditFields = (data, setData) => (
     <div className="space-y-3">
       <input placeholder="Title" value={data.title} onChange={(e) => setData({ ...data, title: e.target.value })} className={inputClass} />

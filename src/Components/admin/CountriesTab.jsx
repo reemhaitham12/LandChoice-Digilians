@@ -7,7 +7,6 @@ import {
   deleteCountry,
 } from "../../Services/country/countryService";
 
-// ✅ Toast Component — يظهر في أعلى اليمين فوق كل حاجة
 const Toast = ({ message, type, onClose }) => {
   if (!message) return null;
   const isError = type === "error";
@@ -43,7 +42,6 @@ export default function CountriesTab() {
   const [currentStep, setCurrentStep] = useState(0);
   const steps = ["Basic Info", "Financial & Duration", "Ratings & Location", "Details & Arrays"];
 
-  // ✅ Toast state موحد
   const [toast, setToast] = useState({ message: "", type: "" });
   const [stepError, setStepError] = useState("");
 
@@ -320,7 +318,6 @@ export default function CountriesTab() {
       setIsEditing(false);
       fetchCountries();
     } catch (err) {
-      // ✅ بيظهر كـ toast في أعلى اليمين والـ modal مش بيتقفل
       showToast(err.response?.data?.error || err.response?.data?.message || "Something went wrong", "error");
     }
   };
@@ -505,7 +502,6 @@ export default function CountriesTab() {
 
   return (
     <div className="p-4">
-      {/* ✅ Toast — يظهر في أعلى اليمين فوق كل حاجة حتى فوق الـ modal */}
       <Toast message={toast.message} type={toast.type} onClose={hideToast} />
 
       <div className="mb-6 flex items-center justify-between gap-4">
@@ -585,7 +581,6 @@ export default function CountriesTab() {
               </div>
             </div>
 
-            {/* stepError جوا الـ modal بس للـ validation */}
             {stepError && (
               <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 flex items-start gap-2">
                 <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />

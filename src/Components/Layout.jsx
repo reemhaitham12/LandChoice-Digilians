@@ -6,11 +6,9 @@ export default function Layout() {
     return (
         <>
             <Navbar />
-            {/* {routing here} */}
             <div className="container mx-auto">
                 <Outlet></Outlet>
             </div>
-            {/* <Footer /> */}
         </>
 
     )

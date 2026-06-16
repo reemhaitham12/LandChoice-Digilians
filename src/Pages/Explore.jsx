@@ -177,59 +177,6 @@ const Explore = () => {
                 </div>
               </div>
 
-              {/* Cost of Living Slider */}
-              {/* <div>
-                <div className="flex justify-between mb-4">
-                  <label className="text-sm font-semibold text-white">
-                    Max Cost of Living
-                  </label>
-                  <span className="text-primary-light font-bold">
-                    {filters.cost}
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="20"
-                  max="100"
-                  step="5"
-                  value={filters.cost}
-                  onChange={(e) =>
-                    updateFilter("cost", parseInt(e.target.value))
-                  }
-                  className="w-full accent-primary h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer"
-                />
-                <div className="flex justify-between mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                  <span>Cheap</span>
-                  <span>Expensive</span>
-                </div>
-              </div> */}
-
-              {/* Quality of Life
-              <div>
-                <div className="flex justify-between mb-4">
-                  <label className="text-sm font-semibold text-white">
-                    Min Quality of Life
-                  </label>
-                  <span className="text-primary-light font-bold">
-                    {filters.qol}+
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  {[0, 6, 7, 8, 9].map((val) => (
-                    <button
-                      key={val}
-                      onClick={() => updateFilter("qol", val)}
-                      className={`flex-1 py-2 rounded-lg text-xs font-bold border transition-all ${
-                        filters.qol === val
-                          ? "bg-primary text-white border-primary glow-box"
-                          : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10"
-                      }`}
-                    >
-                      {val === 0 ? "All" : val}
-                    </button>
-                  ))}
-                </div>
-              </div> */}
 
               {/* Processing Time */}
               <div>

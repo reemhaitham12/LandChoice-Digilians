@@ -199,8 +199,6 @@ export default function AdminTabs() {
   };
 
   const handleEdit = async (updatedUser) => {
-    // Note: Backend doesn't have an edit user endpoint in the docs
-    // This would need to be implemented or you can just close the modal
     addToast("User updated (frontend only - implement API call)");
     setEditModal({ open: false, user: null });
   };
@@ -247,17 +245,7 @@ export default function AdminTabs() {
             <Shield className="w-4 h-4" />
             Admins ({admins.length})
           </button>
-          {/* <button
-            onClick={() => setActiveView("users")}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-              activeView === "users"
-                ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
-                : "bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10"
-            }`}
-          >
-            <UserPlus className="w-4 h-4" />
-            Users ({regularUsers.length})
-          </button> */}
+    
         </div>
       </div>
 
@@ -265,9 +253,7 @@ export default function AdminTabs() {
       {error && (
         <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-300">
           <p className="font-medium">{error}</p>
-          {/* <button onClick={() => setError(null)} className="mt-2 text-sm underline hover:text-red-200">
-            Dismiss
-          </button> */}
+      
         </div>
       )}
 

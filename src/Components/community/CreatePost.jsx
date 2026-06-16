@@ -1,6 +1,4 @@
-// ============================================================
-// FILE 2: CreatePost.jsx
-// ============================================================
+
 
 import { useState } from "react";
 import { FaPaperPlane, FaExclamationTriangle } from "react-icons/fa";

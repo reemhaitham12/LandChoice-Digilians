@@ -18,7 +18,6 @@ export const useCountryData = () => {
         const countries = data.countries || [];
         setAllCountries(countries);
 
-        // ✅ لو في ?add=country_id في الـ URL، ابحث عن الدولة وأضفها
         const addId = searchParams.get('add');
         if (addId) {
           const country = countries.find(
@@ -27,7 +26,6 @@ export const useCountryData = () => {
           if (country) {
             setSelectedCountries([country]);
           }
-          // امسح الـ param من الـ URL بعد ما تضيف الدولة
           setSearchParams({});
         }
       } catch (err) {
@@ -37,7 +35,7 @@ export const useCountryData = () => {
       }
     };
     fetchCountries();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); 
 
   const addCountry = useCallback((country) => {
     setSelectedCountries((prev) => {

@@ -21,10 +21,7 @@ import Community from "./Pages/Community";
 import About from "./Pages/About";
 import AdminDashboard from "./Pages/AdminDashboard";
 
-// const HomeRedirect = () => {
-//   const { user } = useAuth();
-//   return user ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />;
-// };
+
 
 const routers = createBrowserRouter([
   {
