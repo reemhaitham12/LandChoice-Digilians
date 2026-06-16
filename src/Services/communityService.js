@@ -121,7 +121,6 @@ export const fetchPosts = async () => {
   try {
     const { data } = await api.get('/posts');
     const all = (data.posts || []).map(normalisePost);
-    // ✅ إزالة التكرار بالـ ID فقط، من غير pagination
     const unique = all.filter((post, index, self) =>
       index === self.findIndex(p => idsMatch(p.id, post.id))
     );

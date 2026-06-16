@@ -15,9 +15,7 @@ class VisaApiService {
     this.cacheDuration = 15 * 60 * 1000; // 15 minutes in milliseconds
   }
 
-  /**
-   * Get cached data or null if expired/not found
-   */
+
   getCached(key) {
     const cached = this.cache.get(key);
     if (!cached) return null;

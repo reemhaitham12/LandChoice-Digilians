@@ -112,18 +112,7 @@ const Compare = () => {
             )}
 
             {/* Info Note */}
-            {/* <div className="bg-[#0F172A] border border-[#6C8FD9]/20 rounded-2xl p-5">
-              <div className="flex items-start gap-3">
-                <Info className="w-5 h-5 text-[#6C8FD9] mt-0.5 shrink-0" />
-
-                <p className="text-sm text-gray-400">
-                  Data is based on official visa requirements and cost of
-                  living indices. Figures may change over time and should be
-                  verified with official government immigration sources before
-                  making relocation decisions.
-                </p>
-              </div>
-            </div> */}
+           
           </>
         )}
 

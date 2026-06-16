@@ -67,7 +67,7 @@ export default function UsersTab() {
 
       setUsers((prev) => prev.filter((u) => u.email !== user.email));
 
-      showToast("User deleted successfully 🗑️", "success");
+      showToast("User deleted successfully ", "success");
     } catch (error) {
       showToast(error?.response?.data?.error || "Error", "error");
     }
@@ -91,10 +91,7 @@ export default function UsersTab() {
             Manage registered accounts, perform searches, updates and adjust roles.
           </p>
         </div>
-        {/* <button className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-medium text-sm bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:from-blue-500 hover:to-blue-400 transition-all duration-200 active:scale-95">
-          <Plus className="w-4 h-4" />
-          Add users
-        </button> */}
+
       </div>
 
       {/* Search */}

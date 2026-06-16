@@ -11,7 +11,7 @@ const api = axios.create({
 export const getAllCountries = async () => {
   try {
     const response = await api.get('/countries');
-    return response.data; // { countries: [...] }
+    return response.data; 
   } catch (error) {
     console.error('Error fetching countries:', error);
     throw error;

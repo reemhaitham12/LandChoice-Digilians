@@ -15,7 +15,7 @@ export default function NotificationBell() {
 
   useEffect(() => {
     if (!communityContext) {
-      console.error('❌ CommunityContext not available');
+      console.error(' CommunityContext not available');
       setError('Notifications unavailable');
     }
   }, [communityContext]);
@@ -27,7 +27,7 @@ export default function NotificationBell() {
         clearNotifications();
       }
     } catch (err) {
-      console.error('❌ Failed to open notifications:', err);
+      console.error(' Failed to open notifications:', err);
       setError('Failed to load notifications');
     }
   };

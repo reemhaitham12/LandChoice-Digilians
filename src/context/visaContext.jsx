@@ -12,8 +12,6 @@ export function VisaProvider({ children }) {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/countries`);
         const data = await res.json();
 
-        // console.log("API DATA:", data);
-
         const countries = data?.countries || [];
 
         const formattedData = countries.map((country) => ({
@@ -23,7 +21,6 @@ export function VisaProvider({ children }) {
 
         setVisaData(formattedData);
       } catch (err) {
-        // console.error("API Error:", err);
         setVisaData([]);
       } finally {
         setLoading(false);

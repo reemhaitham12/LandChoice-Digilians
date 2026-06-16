@@ -8,17 +8,14 @@ export default function CountryHero({ country, navigate: navProp }) {
   const navigate = navProp || useNavigate();
   const { user } = useAuth();
 
-  // ── "Add to Compare" ── navigates to /compare with this country pre-selected
   const handleCompare = () => {
     navigate(`/compare?add=${encodeURIComponent(country.country_id || country._id || country.id)}`);
   };
 
-  // ── "Check Eligibility" ── navigates to Salary Fit checker
   const handleEligibility = () => {
     navigate('/salary-fit');
   };
 
-  // ── "Track Application" ── navigates to Checklist with country pre-selected
   const handleTrack = () => {
     navigate(`/checklist?country=${encodeURIComponent(country.country_id || country._id || country.id)}`);
   };

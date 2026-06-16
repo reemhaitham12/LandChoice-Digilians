@@ -17,7 +17,6 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
-// import Loading from '../Components/Loading';
 const Checklist = () => {
 
   const { visaData, loading } = useVisa();
