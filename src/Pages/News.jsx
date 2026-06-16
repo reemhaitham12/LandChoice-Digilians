@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRss, faExternalLinkAlt, faCalendarAlt, faFilter, faSyncAlt, faSpinner, faGlobe, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import newsService from '../services/newsService';
-import { useVisa } from '../context/visaContext'; 
-import Loading from "../Components/Loading";
+import { useVisa } from '../context/visaContext';
 
 const News = () => {
   const { visaData, loading: visaLoading } = useVisa(); 
@@ -118,9 +117,6 @@ const News = () => {
           </button>
         </div>
       </motion.div>
-
-      {/* Loading State */}
-      {loading && <Loading />}
 
       {/* Articles Grid */}
       {!loading && articles.length > 0 && (
