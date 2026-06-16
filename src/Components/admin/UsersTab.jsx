@@ -140,8 +140,13 @@ export default function UsersTab() {
                     <p className="text-sm text-slate-400">{user.email}</p>
                   </div>
                 </div>
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-slate-800/80 text-slate-400 border-slate-700">
-                  USER
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${user.is_verified
+                      ? "bg-green-500/10 text-green-400 border-green-500/20"
+                      : "bg-red-500/10 text-red-400 border-red-500/20"
+                    }`}
+                >
+                  {user.is_verified ? "Active" : "Inactive"}
                 </span>
               </div>
 
